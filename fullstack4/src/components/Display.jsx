@@ -6,6 +6,8 @@ function Display({ segments }) {
         minHeight: "120px",
         padding: "10px",
         marginBottom: "20px",
+        whiteSpace: "pre-wrap",
+        wordBreak: "break-word",
       }}
     >
       {segments.map((seg, index) => (
