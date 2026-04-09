@@ -5,6 +5,7 @@ import Toolbar from "./components/Toolbar";
 import VirtualKeyboard from "./components/VirtualKeyboard";
 import DeleteControls from "./components/DeleteControls";
 import SearchReplace from "./components/SearchReplace";
+import FileBar from "./components/FileBar";
 
 function App() {
   const [segments, setSegments] = useState([
@@ -32,6 +33,11 @@ const [highlights, setHighlights] = useState([]); // מערך של {start, end}
     },
   ],
 ]);
+const [files, setFiles] = useState(() => {
+  const saved = localStorage.getItem("files");
+  return saved ? JSON.parse(saved) : [];
+});
+const [currentFile, setCurrentFile] = useState("");
 
   const plainText = segments.map((s) => s.text).join("");
 
@@ -264,8 +270,79 @@ const handleUndo = () => {
     return prev.slice(0, -1);
   });
 };
+const handleSave = () => {
+  if (!currentFile) {
+    alert("No file selected. Use Save As.");
+    return;
+  }
+
+  localStorage.setItem(
+    `file_${currentFile}`,
+    JSON.stringify(segments)
+  );
+};
+const handleSaveAs = (fileName) => {
+  if (!fileName) return;
+
+  localStorage.setItem(
+    `file_${fileName}`,
+    JSON.stringify(segments)
+  );
+
+  setCurrentFile(fileName);
+
+  setFiles((prev) => {
+    if (prev.includes(fileName)) return prev;
+
+    const updated = [...prev, fileName];
+    localStorage.setItem("files", JSON.stringify(updated));
+    return updated;
+  });
+};
+const handleLoad = (fileName) => {
+  if (!fileName) return;
+
+  const data = localStorage.getItem(`file_${fileName}`);
+  if (!data) return;
+
+  const parsed = JSON.parse(data);
+
+  setSegments(parsed);
+  setHistory([parsed]);
+  setCurrentFile(fileName); // 🔥 חשוב
+};
+const handleNew = () => {
+  if (plainText.length > 0) {
+    const confirmNew = window.confirm("Start new file without saving?");
+    if (!confirmNew) return;
+  }
+
+  const newDoc = [
+    {
+      text: "",
+      style: currentStyle,
+    },
+  ];
+
+  setSegments(newDoc);
+  setHistory([newDoc]);
+  setCurrentFile("");
+};
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
+      {/* <FileControls
+  onSave={handleSave}
+  onLoad={handleLoad}
+  files={files}
+/> */}
+<FileBar
+  files={files}
+  onSave={handleSave}
+  onSaveAs={handleSaveAs}
+  onLoad={handleLoad}
+  onNew={handleNew}
+  currentFile={currentFile}
+/>
       <h1 style={{ textAlign: "center" }}>Text Editor</h1>
 
       <Display segments={segments} highlights={highlights} />
