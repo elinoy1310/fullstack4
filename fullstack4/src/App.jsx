@@ -4,6 +4,7 @@ import TextInput from "./components/TextInput";
 import Toolbar from "./components/Toolbar";
 import VirtualKeyboard from "./components/VirtualKeyboard";
 import DeleteControls from "./components/DeleteControls";
+import SearchReplace from "./components/SearchReplace";
 
 function App() {
   const [segments, setSegments] = useState([
@@ -21,6 +22,8 @@ function App() {
   });
 
   const [applyMode, setApplyMode] = useState("all");
+const [highlights, setHighlights] = useState([]); // מערך של {start, end}
+  // { start: number, end: number }
 
   const plainText = segments.map((s) => s.text).join("");
 
@@ -77,98 +80,149 @@ function App() {
     }));
   };
   const changeApplyMode = (mode) => {
-  if (mode === "all") {
-    // להחיל מיידית על כל הטקסט
-    setSegments((prev) =>
-      prev.map((seg) => ({
-        ...seg,
-        style: { ...seg.style, ...currentStyle },
-      }))
-    );
+    if (mode === "all") {
+      // להחיל מיידית על כל הטקסט
+      setSegments((prev) =>
+        prev.map((seg) => ({
+          ...seg,
+          style: { ...seg.style, ...currentStyle },
+        }))
+      );
+    }
+
+    setApplyMode(mode);
+  };
+
+  // הכנסת תו מהמקלדת
+  const insertChar = (char) => {
+    setSegments((prev) => {
+      const updated = [...prev];
+      updated[updated.length - 1].text += char;
+      return updated;
+    });
+  };
+
+  // מחיקת תו
+  const deleteChar = () => {
+    setSegments((prev) => {
+      const updated = [...prev];
+      const last = updated[updated.length - 1];
+      if (last.text.length > 0) {
+        last.text = last.text.slice(0, -1);
+      }
+      if (last.text.length === 0 && updated.length > 1) {
+        updated.pop();
+      }
+      return updated;
+    });
+  };
+
+  // מחיקת מילה
+  const deleteWord = () => {
+    setSegments((prev) => {
+      // כל הטקסט
+      const fullText = prev.map((s) => s.text).join("");
+
+      // מוחקים מילה אחרונה
+      const newText = fullText.replace(/\s*\S+$/, "");
+
+      // אם ריק
+      if (!newText) {
+        return [
+          {
+            text: "",
+            style: currentStyle,
+          },
+        ];
+      }
+
+      // 🔥 בונים מחדש סגמנטים לפי אורך
+      let remaining = newText;
+      const newSegments = [];
+
+      for (let seg of prev) {
+        if (remaining.length === 0) break;
+
+        const take = remaining.slice(0, seg.text.length);
+
+        newSegments.push({
+          text: take,
+          style: seg.style,
+        });
+
+        remaining = remaining.slice(take.length);
+      }
+
+      return newSegments;
+    });
+  };
+
+  // מחיקת הכל
+  const clearAll = () => {
+    setSegments([
+      {
+        text: "",
+        style: currentStyle,
+      },
+    ]);
+  };
+const handleFind = (searchText) => {
+  if (!searchText) return;
+
+  const fullText = segments.map((s) => s.text).join("");
+  const matches = [];
+  let startIndex = 0;
+
+  while (true) {
+    const index = fullText.indexOf(searchText, startIndex);
+    if (index === -1) break;
+
+    matches.push({ start: index, end: index + searchText.length });
+    startIndex = index + searchText.length;
   }
 
-  setApplyMode(mode);
+  setHighlights(matches);
+
+  // הסרת highlight אחרי 2 שניות
+  setTimeout(() => setHighlights([]), 2000);
 };
 
-// הכנסת תו מהמקלדת
-const insertChar = (char) => {
-  setSegments((prev) => {
-    const updated = [...prev];
-    updated[updated.length - 1].text += char;
-    return updated;
-  });
-};
+  // const handleReplace = (searchText, replaceText) => {
+  //   if (!searchText) return;
 
-// מחיקת תו
-const deleteChar = () => {
-  setSegments((prev) => {
-    const updated = [...prev];
-    const last = updated[updated.length - 1];
-    if (last.text.length > 0) {
-      last.text = last.text.slice(0, -1);
-    }
-      if ( last.text.length === 0 && updated.length > 1) {
-      updated.pop();
-    }
-    return updated;
-  });
-};
+  //   const fullText = segments.map((s) => s.text).join("");
+  //   const newText = fullText.replace(searchText, replaceText);
 
-// מחיקת מילה
-const deleteWord = () => {
-  setSegments((prev) => {
-    // כל הטקסט
-    const fullText = prev.map((s) => s.text).join("");
+  //   // בנייה מחדש (כמו שעשינו קודם)
+  //   setSegments([
+  //     {
+  //       text: newText,
+  //       style: currentStyle,
+  //     },
+  //   ]);
+  // };
 
-    // מוחקים מילה אחרונה
-    const newText = fullText.replace(/\s*\S+$/, "");
+  const handleReplace = (searchText, replaceText) => {
+  if (!searchText) return;
 
-    // אם ריק
-    if (!newText) {
-      return [
-        {
-          text: "",
-          style: currentStyle,
-        },
-      ];
-    }
+  const fullText = segments.map((s) => s.text).join("");
+  const newText = fullText.split(searchText).join(replaceText);
 
-    // 🔥 בונים מחדש סגמנטים לפי אורך
-    let remaining = newText;
-    const newSegments = [];
-
-    for (let seg of prev) {
-      if (remaining.length === 0) break;
-
-      const take = remaining.slice(0, seg.text.length);
-
-      newSegments.push({
-        text: take,
-        style: seg.style,
-      });
-
-      remaining = remaining.slice(take.length);
-    }
-
-    return newSegments;
-  });
-};
-
-// מחיקת הכל
-const clearAll = () => {
   setSegments([
     {
-      text: "",
+      text: newText,
       style: currentStyle,
     },
   ]);
+
+  setHighlights([]); // מנקים highlight אחרי החלפה
 };
 
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
       <h1 style={{ textAlign: "center" }}>Text Editor</h1>
 
-      <Display segments={segments} />
+      <Display segments={segments} highlights={highlights} />
 
       <TextInput text={plainText} onChange={handleTextChange} />
 
@@ -179,15 +233,17 @@ const clearAll = () => {
         setApplyMode={changeApplyMode}
       />
       <div style={{ marginTop: "20px" }}>
-  <VirtualKeyboard onInsert={insertChar} />
+        <VirtualKeyboard onInsert={insertChar} />
 
-  <DeleteControls
-    onDeleteChar={deleteChar}
-    onDeleteWord={deleteWord}
-    onClear={clearAll}
-  />
-</div>
+        <DeleteControls
+          onDeleteChar={deleteChar}
+          onDeleteWord={deleteWord}
+          onClear={clearAll}
+        />
+      </div>
+      <SearchReplace onFind={handleFind} onReplace={handleReplace} />
     </div>
+
   );
 }
 
