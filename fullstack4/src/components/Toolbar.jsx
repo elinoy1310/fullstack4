@@ -2,7 +2,7 @@ function Toolbar({ currentStyle, updateStyle, applyMode, setApplyMode }) {
   return (
     <div
       style={{
-        borderTop: "2px solid black",
+        borderTop: "2px solid #000000",
         paddingTop: "10px",
       }}
     >

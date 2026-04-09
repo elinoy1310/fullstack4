@@ -10,12 +10,12 @@ function App() {
   const [segments, setSegments] = useState([
     {
       text: "",
-      style: { color: "black", fontSize: "16px", fontFamily: "Arial", fontWeight: "normal" },
+      style: { color: "#000000", fontSize: "16px", fontFamily: "Arial", fontWeight: "normal" },
     },
   ]);
 
   const [currentStyle, setCurrentStyle] = useState({
-    color: "black",
+    color: "#000000",
     fontSize: "16px",
     fontFamily: "Arial",
     fontWeight: "normal",
@@ -24,40 +24,52 @@ function App() {
   const [applyMode, setApplyMode] = useState("all");
 const [highlights, setHighlights] = useState([]); // מערך של {start, end}
   // { start: number, end: number }
+  const [history, setHistory] = useState([
+  [
+    {
+      text: "",
+      style: { color: "#000000", fontSize: "16px", fontFamily: "Arial", fontWeight: "normal" },
+    },
+  ],
+]);
 
   const plainText = segments.map((s) => s.text).join("");
 
   // ✏️ כתיבה
   const handleTextChange = (newText) => {
     if (newText.length < plainText.length) {
-      // מחיקה (פשוט בינתיים)
-      setSegments([
-        {
-          text: newText,
-          style: currentStyle,
-        },
-      ]);
-      return;
-    }
+  const updated = [
+    { text: newText, style: currentStyle },
+  ];
+  setSegments(updated);
+  pushToHistory(updated); // ✅ דוחפים snapshot חדש
+  return;
+}
 
     const addedText = newText.slice(plainText.length);
 
-    setSegments((prev) => {
-      const updated = [...prev];
-      updated[updated.length - 1].text += addedText;
-      return updated;
-    });
+setSegments((prev) => {
+  const updated = [...prev];
+  updated[updated.length - 1] = {
+    text: updated[updated.length - 1].text + addedText,
+    style: { ...updated[updated.length - 1].style },
+  };
+  pushToHistory(updated); // ✅ כאן דוחפים snapshot חדש
+  return updated;
+});
   };
 
   // 🎨 שינוי סטייל
   const updateStyle = (newStyle) => {
     if (applyMode === "all") {
-      setSegments((prev) =>
-        prev.map((seg) => ({
+      setSegments((prev) =>{
+        const updated = prev.map((seg) => ({
           ...seg,
           style: { ...seg.style, ...newStyle },
         }))
-      );
+        pushToHistory(updated);
+        return updated;
+     } );
     } else {
       // future → יוצרים סגמנט חדש רק אם יש כבר טקסט
       setSegments((prev) => {
@@ -69,7 +81,7 @@ const [highlights, setHighlights] = useState([]); // מערך של {start, end}
             style: { ...currentStyle, ...newStyle },
           });
         }
-
+pushToHistory(updated);
         return updated;
       });
     }
@@ -82,12 +94,14 @@ const [highlights, setHighlights] = useState([]); // מערך של {start, end}
   const changeApplyMode = (mode) => {
     if (mode === "all") {
       // להחיל מיידית על כל הטקסט
-      setSegments((prev) =>
-        prev.map((seg) => ({
+      setSegments((prev) =>{
+       const updated= prev.map((seg) => ({
           ...seg,
           style: { ...seg.style, ...currentStyle },
         }))
-      );
+        pushToHistory(updated);
+        return updated;
+     } );
     }
 
     setApplyMode(mode);
@@ -98,6 +112,7 @@ const [highlights, setHighlights] = useState([]); // מערך של {start, end}
     setSegments((prev) => {
       const updated = [...prev];
       updated[updated.length - 1].text += char;
+      pushToHistory(updated);
       return updated;
     });
   };
@@ -113,6 +128,7 @@ const [highlights, setHighlights] = useState([]); // מערך של {start, end}
       if (last.text.length === 0 && updated.length > 1) {
         updated.pop();
       }
+      pushToHistory(updated);
       return updated;
     });
   };
@@ -153,18 +169,20 @@ const [highlights, setHighlights] = useState([]); // מערך של {start, end}
         remaining = remaining.slice(take.length);
       }
 
+  pushToHistory(newSegments); // ✅ דוחפים snapshot החדש
+
       return newSegments;
     });
+
   };
 
   // מחיקת הכל
   const clearAll = () => {
-    setSegments([
-      {
-        text: "",
-        style: currentStyle,
-      },
-    ]);
+    const updated = [
+  { text: "", style: currentStyle }
+];
+setSegments(updated);
+pushToHistory(updated); // ✅ snapshot חדש
   };
 const handleFind = (searchText) => {
   if (!searchText) return;
@@ -208,16 +226,44 @@ const handleFind = (searchText) => {
   const fullText = segments.map((s) => s.text).join("");
   const newText = fullText.split(searchText).join(replaceText);
 
-  setSegments([
-    {
-      text: newText,
-      style: currentStyle,
-    },
-  ]);
-
-  setHighlights([]); // מנקים highlight אחרי החלפה
+const newSegments = [
+  { text: newText, style: currentStyle }
+];
+setSegments(newSegments);
+pushToHistory(newSegments); // ✅ snapshot חדש
+setHighlights([]);
 };
+const MAX_HISTORY = 50;
 
+const pushToHistory = (segmentsToSave) => {
+  const cloned = segmentsToSave.map((s) => ({
+    text: s.text,
+    style: { ...s.style },
+  }));
+
+  setHistory((prev) => {
+    const newHistory = [...prev, cloned];
+    // אם ההיסטוריה ארוכה מדי, חותכים מההתחלה
+    if (newHistory.length > MAX_HISTORY) {
+      return newHistory.slice(newHistory.length - MAX_HISTORY);
+    }
+    return newHistory;
+  });
+};
+const handleUndo = () => {
+  setHistory((prev) => {
+    if (prev.length <= 1) return prev; // אין מה לבטל
+
+    const last = prev[prev.length - 2]; // המצב הקודם
+
+    setSegments(last.map((s) => ({
+      text: s.text,
+      style: { ...s.style },
+    })));
+
+    return prev.slice(0, -1);
+  });
+};
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
       <h1 style={{ textAlign: "center" }}>Text Editor</h1>
@@ -242,7 +288,11 @@ const handleFind = (searchText) => {
         />
       </div>
       <SearchReplace onFind={handleFind} onReplace={handleReplace} />
+      <button onClick={handleUndo} style={{ marginLeft: "10px" }}>
+  Undo
+</button>
     </div>
+    
 
   );
 }
