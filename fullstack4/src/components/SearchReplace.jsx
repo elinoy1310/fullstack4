@@ -5,7 +5,7 @@ function SearchReplace({ onFind, onReplace }) {
   const [replace, setReplace] = useState("");
 
   return (
-    <div style={{ marginTop: "20px", textAlign: "center" }}>
+    <div id="search-replace-container" >
       <h3>Search & Replace</h3>
 
       <input
@@ -18,15 +18,13 @@ function SearchReplace({ onFind, onReplace }) {
         placeholder="Replace..."
         value={replace}
         onChange={(e) => setReplace(e.target.value)}
-        style={{ marginLeft: "5px" }}
       />
 
-      <div style={{ marginTop: "10px" }}>
+      <div>
         <button onClick={() => onFind(search)}>Find</button>
 
         <button
           onClick={() => onReplace(search, replace)}
-          style={{ marginLeft: "5px" }}
         >
           Replace
         </button>

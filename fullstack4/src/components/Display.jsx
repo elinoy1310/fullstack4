@@ -2,16 +2,7 @@ function Display({ segments, highlights }) {
   let currentIndex = 0;
 
   return (
-    <div
-      style={{
-        border: "2px solid black",
-        minHeight: "120px",
-        padding: "10px",
-        marginBottom: "20px",
-        whiteSpace: "pre-wrap",
-        wordBreak: "break-word",
-      }}
-    >
+    <div id="display-container">
       {segments.map((seg, i) => {
         const segStart = currentIndex;
         const segEnd = currentIndex + seg.text.length;
@@ -30,7 +21,7 @@ function Display({ segments, highlights }) {
             }
             // טקסט מודגש
             children.push(
-              <span key={`${i}-${start}`} style={{ backgroundColor: "yellow" }}>
+              <span className="highlight" key={`${i}-${start}`} >
                 {seg.text.slice(start, end)}
               </span>
             );

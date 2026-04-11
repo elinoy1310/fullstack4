@@ -10,11 +10,11 @@ function VirtualKeyboard({ onInsert }) {
   };
 
   return (
-    <div style={{ textAlign: "center", marginBottom: "10px" }}>
+    <div id="keyboard-container" >
       <h3>Virtual Keyboard</h3>
 
       {/* החלפת קטגוריה */}
-      <div style={{ marginBottom: "10px" }}>
+      <div >
         <button onClick={() => setMode("emoji")}>😀</button>
         <button onClick={() => setMode("math")}>Math</button>
         <button onClick={() => setMode("symbols")}>Symbols</button>
@@ -26,7 +26,8 @@ function VirtualKeyboard({ onInsert }) {
           <button
             key={index}
             onClick={() => onInsert(char)}
-            style={{ margin: "5px", padding: "10px" }}
+            className="key"
+
           >
             {char}
           </button>

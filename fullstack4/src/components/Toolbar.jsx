@@ -1,11 +1,6 @@
 function Toolbar({ currentStyle, updateStyle, applyMode, setApplyMode }) {
   return (
-    <div
-      style={{
-        borderTop: "2px solid #000000",
-        paddingTop: "10px",
-      }}
-    >
+    <div id="toolbar-container"    >
       <h3>Editing Tools</h3>
 
       {/* צבע */}
@@ -19,7 +14,7 @@ function Toolbar({ currentStyle, updateStyle, applyMode, setApplyMode }) {
       </label>
 
       {/* גודל */}
-      <label style={{ marginLeft: "10px" }}>
+      <label className="tool-lbl" >
         Size:
         <input
           type="number"
@@ -31,7 +26,7 @@ function Toolbar({ currentStyle, updateStyle, applyMode, setApplyMode }) {
       </label>
 
       {/* פונט */}
-      <label style={{ marginLeft: "10px" }}>
+      <label  className="tool-lbl">
         Font:
         <select
           value={currentStyle.fontFamily}
@@ -58,7 +53,7 @@ function Toolbar({ currentStyle, updateStyle, applyMode, setApplyMode }) {
       
 
       {/* מצב */}
-      <div style={{ marginTop: "10px" }}>
+      <div >
         <button onClick={() => setApplyMode("all")}>
           Apply to All
         </button>

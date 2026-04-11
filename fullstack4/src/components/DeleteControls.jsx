@@ -1,13 +1,13 @@
 function DeleteControls({ onDeleteChar, onDeleteWord, onClear }) {
   return (
-    <div style={{ marginTop: "10px", textAlign: "center" }}>
+    <div id="delete-controls" >
       <h3>Delete</h3>
 
       <button onClick={onDeleteChar}>Delete Char</button>
-      <button onClick={onDeleteWord} style={{ marginLeft: "5px" }}>
+      <button className="delete-btn" onClick={onDeleteWord}>
         Delete Word
       </button>
-      <button onClick={onClear} style={{ marginLeft: "5px" }}>
+      <button className="delete-btn" onClick={onClear}>
         Clear All
       </button>
     </div>
