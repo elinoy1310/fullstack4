@@ -27,7 +27,7 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
             const updated = [...prev];
             updated[updated.length - 1] = {
                 text: updated[updated.length - 1].text + addedText,
-                style: { ...updated[updated.length - 1].style },
+                style: currentStyle,
             };
             pushToHistory(updated);
             return updated;
@@ -241,14 +241,17 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
                 applyMode={applyMode}
                 setApplyMode={changeApplyMode}
             />
-            <div id="keyboard-container">
-                <VirtualKeyboard onInsert={insertChar} />
-
-                <DeleteControls
-                    onDeleteChar={deleteChar}
-                    onDeleteWord={deleteWord}
-                    onClear={clearAll}
-                />
+            <div id="controls-container">
+                <div id="keyboard-container">
+                    <VirtualKeyboard onInsert={insertChar} />
+                </div>
+                <div id="delete-controls">
+                    <DeleteControls
+                        onDeleteChar={deleteChar}
+                        onDeleteWord={deleteWord}
+                        onClear={clearAll}
+                    />
+                </div>
             </div>
             <SearchReplace onFind={handleFind} onReplace={handleReplace} />
             <button onClick={handleUndo}>

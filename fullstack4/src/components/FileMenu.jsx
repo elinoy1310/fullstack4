@@ -81,14 +81,18 @@ function FileMenu({ segments,setSegments, currentStyle, defaultStyle, setCurrent
         isSaved = false;
     };
 
-    return <FileBar
+    return (<>
+    <FileBar
         files={files}
         onSave={handleSave}
         onSaveAs={handleSaveAs}
         onLoad={handleLoad}
         onNew={handleNew}
-        currentFile={currentFile}
-      />
+        />
+        {currentFile && <h2 id="file-name">File Name: {currentFile}</h2>}
+
+        </> 
+        )
 
 }
 export default FileMenu;

@@ -14,20 +14,19 @@ function VirtualKeyboard({ onInsert }) {
       <h3>Virtual Keyboard</h3>
 
       {/* החלפת קטגוריה */}
-      <div >
+      <div id="category-buttons">
         <button onClick={() => setMode("emoji")}>😀</button>
         <button onClick={() => setMode("math")}>Math</button>
         <button onClick={() => setMode("symbols")}>Symbols</button>
       </div>
 
       {/* מקלדת */}
-      <div>
+      <div id="keys-container">
         {keyboards[mode].map((char, index) => (
           <button
             key={index}
             onClick={() => onInsert(char)}
             className="key"
-
           >
             {char}
           </button>
