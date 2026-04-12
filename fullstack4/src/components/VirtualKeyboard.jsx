@@ -15,9 +15,11 @@ function VirtualKeyboard({ onInsert }) {
   return (
     <div id="keyboard-container" >
       <h3>Virtual Keyboard</h3>
+      <p id="category-label">Categories</p>
 
       {/* החלפת קטגוריה */}
-      <div id="category-buttons">
+      <div id="category-buttons" >
+      
         <button onClick={() => setMode("emoji")}>😀</button>
         <button onClick={() => setMode("math")}>Math</button>
         <button onClick={() => setMode("symbols")}>Symbols</button>

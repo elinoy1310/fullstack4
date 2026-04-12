@@ -227,6 +227,11 @@ padding: 25px 0px;
   gap: 10px;
   justify-content: center;
   margin-bottom: 15px;
+
+}
+
+#category-buttons button {
+  background-color: rgb(221, 188, 165);
 }
 
 #keys-container {
@@ -389,7 +394,7 @@ input[type="number"], select, input[type="text"] {
     background: rgba(255, 255, 255, 0.4);
     border: 1px solid var(--glass-border);
     box-shadow: var(--shadow);
-    margin-top: 20px;
+    margin-top: 0px;
     padding: 25px;
     /* ביטול flex-direction column אם רוצים מראה אופקי יותר, או השארה למראה נקי */
 }
@@ -482,4 +487,15 @@ select {
     bottom: 30px;    /* מרחק מהתחתית */
     left: 30px;      /* מרחק מצד שמאל */
     z-index: 9999;   /* מוודא שהוא תמיד יהיה מעל כל שאר האלמנטים */
+}
+
+#category-label{
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: underline;
+  justify-self: center;
+}
+
+#search-replace-container {
+  margin-top: 0px;
 }
