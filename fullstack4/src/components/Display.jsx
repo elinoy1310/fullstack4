@@ -2,6 +2,9 @@ function Display({ segments, highlights }) {
   let currentIndex = 0;
 
   return (
+    <div >
+      <h1>Display</h1>
+      
     <div id="display-container">
       {segments.map((seg, i) => {
         const segStart = currentIndex;
@@ -42,6 +45,7 @@ function Display({ segments, highlights }) {
           </span>
         );
       })}
+    </div>
     </div>
   );
 }

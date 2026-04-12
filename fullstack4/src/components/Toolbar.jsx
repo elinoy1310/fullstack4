@@ -26,7 +26,7 @@ function Toolbar({ currentStyle, updateStyle, applyMode, setApplyMode }) {
       </label>
 
       {/* פונט */}
-      <label  className="tool-lbl">
+      <label className="tool-lbl">
         Font:
         <select
           value={currentStyle.fontFamily}
@@ -37,10 +37,15 @@ function Toolbar({ currentStyle, updateStyle, applyMode, setApplyMode }) {
           <option>Arial</option>
           <option>Courier New</option>
           <option>Times New Roman</option>
+          <option value="Impact">Impact</option>
+          <option value="Georgia">Georgia</option>
+          <option value="Trebuchet MS">Trebuchet MS</option>
+          <option value="Comic Sans MS">Comic Sans MS</option>
+          <option value="Brush Script MT">Brush Script MT</option>
         </select>
       </label>
 
-      <button
+      <button className={currentStyle.fontWeight === "bold" ? "bold-clicked" : ""}
         onClick={() =>
           updateStyle({
             fontWeight:
@@ -50,15 +55,25 @@ function Toolbar({ currentStyle, updateStyle, applyMode, setApplyMode }) {
       >
         Bold
       </button>
-      
 
-      {/* מצב */}
-      <div >
-        <button onClick={() => setApplyMode("all")}>
+      {/* מצב עריכה - Toggle Switch */}
+      <div className="mode-toggle-container">
+        <div className={`toggle-slider ${applyMode}`}></div>
+
+        <button
+          id="apply-all-btn"
+          type="button"
+          className={`toggle-btn ${applyMode === "all" ? "active" : ""}`}
+          onClick={() => setApplyMode("all")}
+        >
           Apply to All
         </button>
 
-        <button onClick={() => setApplyMode("future")}>
+        <button
+          type="button"
+          className={`toggle-btn ${applyMode === "future" ? "active" : ""}`}
+          onClick={() => setApplyMode("future")}
+        >
           From Now On
         </button>
       </div>

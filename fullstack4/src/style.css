@@ -41,11 +41,15 @@ body {
 h1 {
   text-align: center;
   font-weight: 800;
-  font-size: 3rem;
-  background: linear-gradient(to right, #5ce765, #a29bfe);
+  font-size: 2.5rem;
+  color: var(--text-dark);
+  text-shadow: #908cdd 1px 1px 3px;
+  /* background: linear-gradient(to right, #675cff,#c5c2eb);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  -webkit-text-fill-color: transparent; */
   margin-top: 0;
+  margin-bottom: 10px;
+  /* box-shadow: purple 0px 5px 15px; */
 }
 
 /* אזור התצוגה המרכזי */
@@ -61,6 +65,8 @@ h1 {
   border: 1px solid #eee;
   white-space: pre-wrap;
   word-break: break-word;
+  display: flex;
+  /* align-items: center; */
 }
 
 .highlight {
@@ -73,7 +79,7 @@ h1 {
 /* תיבת הטקסט */
 #text-input-container textarea {
   width: 100%;
-  height: 120px;
+  height: 150px;
   background: rgba(255, 255, 255, 0.5);
   border: 2px solid transparent;
   border-radius: var(--radius);
@@ -90,7 +96,7 @@ h1 {
 }
 
 /* סרגלי כלים וכפתורים */
-#toolbar-container, #search-replace-container {
+#toolbar-container {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
@@ -99,8 +105,21 @@ h1 {
   background: rgba(255, 255, 255, 0.4);
   padding: 20px;
   border-radius: var(--radius);
-  margin-bottom: 20px;
+  margin-bottom: 0px;
 }
+
+ #search-replace-container{
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border-radius: var(--radius);
+
+
+ }
 #file-bar-container{
   display: flex;
   flex-wrap: wrap;
@@ -138,9 +157,9 @@ button {
 }
 
 button:hover {
-  transform: translateY(-3px);
+  /* transform: translateY(-3px); */
   box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-  filter: brightness(1.05);
+  
 }
 
 #file-bar-container button:hover{
@@ -159,16 +178,39 @@ button[onClick*="handleUndo"] { background: var(--primary); color: white; width:
 .delete-btn, [onClick*="onClear"] { background: var(--danger); color: white; }
 button[onClick*="onSave"] { background: var(--success); color: var(--text-dark); }
 
-/* המקלדת והמחיקה (גריד) */
 #keyboard-container {
   margin-top: 20px;
+  padding: 0 ;
+  width: 75vh;
+
+}
+
+h3{
+  text-align: center;
 }
 
 #controls-container {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
+  display: flex;
+  flex-direction: row;
   gap: 20px;
+  justify-content: center;
   margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius);
+   margin-top: 5px;
+padding: 25px 0px;
+ 
+}
+
+#btns-container{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding-bottom: 20px;
 }
 
 /* מקשי מקלדת */
@@ -196,8 +238,9 @@ button[onClick*="onSave"] { background: var(--success); color: var(--text-dark);
 
 #delete-buttons {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 10px;
+  justify-content: center;
 }
 
 /* Dropdown קבצים */
@@ -242,10 +285,11 @@ button[onClick*="onSave"] { background: var(--success); color: var(--text-dark);
 /* Inputs קטנים (צבע, מספר וכו') */
 input[type="color"] {
   border: none;
-  width: 40px;
-  height: 40px;
+  /* width: 40px;
+  height: 40px; */
   cursor: pointer;
-  background: none;
+  /* background: none; */
+  /* border-radius: 30%; */
 }
 
 input[type="number"], select, input[type="text"] {
@@ -258,4 +302,184 @@ input[type="number"], select, input[type="text"] {
 #file-name{
   text-align: center;
   font-size: 2rem;
+  color: var(--text-dark);
+}
+
+.bold-clicked{
+  font-weight: bold;
+  border: 1px solid black;
+}
+
+/* קונטיינר למתג */
+.mode-toggle-container {
+  position: relative;
+  display: flex;
+  background: #cad0db; /* צבע רקע ניטרלי */
+  border-radius: 100px; /* צורת גלולה */
+  padding: 4px;
+  width: fit-content;
+  margin: 0px;
+  gap: 0;
+  box-shadow: inset 0 2px 4px rgba(145, 83, 245, 0.05);
+}
+
+/* הכפתורים בתוך המתג */
+.toggle-btn {
+  position: relative;
+  z-index: 2; /* מעל הסליידר */
+  background: transparent; 
+    box-shadow: none !important;
+  color: var(--text-muted);
+  padding: 10px 24px;
+  font-size: 0.9rem;
+  border-radius: 100px;
+  min-width: 120px;
+  transition: color 0.3s ease;
+}
+
+.toggle-btn.active {
+  color: black; /* טקסט לבן כשהכפתור פעיל */
+  font-weight: bold;
+  /* text-shadow: white 1px 1px 1px; */
+  background: #7dd8f6;
+
+}
+
+.toggle-btn.active:hover {
+  filter: brightness(1);
+  text-shadow:none;
+  transform: none;
+}
+
+/* הסליידר שזז */
+.toggle-slider {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  width: calc(50% - 4px); /* חצי מהרוחב */
+  background: var(--accent-bold); /* הצבע הסגול שלנו */
+  border-radius: 100px;
+  z-index: 1;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* תנועה קפיצית מגניבה */
+}
+
+/* מיקום הסליידר לפי המצב */
+.toggle-slider.all {
+  transform: translateX(0);
+}
+
+.toggle-slider.future {
+  /* מזיז את הסליידר לצד ימין */
+  transform: translateX(100%);
+}
+
+/* ביטול אפקטים של כפתור רגיל בתוך המתג */
+.toggle-btn:hover {
+  transform: none;
+  filter: brightness(2);
+  text-shadow: white 10px 10px 10px;
+}
+
+/* #editor-container{
+  padding: 0px 25vh;
+} */
+
+/* שדרוג הקונטיינר של חיפוש והחלפה */
+#search-replace-container {
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow);
+    margin-top: 20px;
+    padding: 25px;
+    /* ביטול flex-direction column אם רוצים מראה אופקי יותר, או השארה למראה נקי */
+}
+
+/* עיצוב כותרת המשנה */
+#search-replace-container h3 {
+    color: var(--text-dark);
+    font-size: 1.2rem;
+    display: inline-block;
+    
+}
+
+/* שדרוג האינפוטים בתוך החיפוש */
+#search-replace-container input {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+#search-replace-container input:focus {
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 10px rgba(162, 155, 254, 0.2);
+    transform: scale(1.01);
+}
+
+/* סידור הכפתורים בשורה אחת */
+#search-replace-container div {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+/* צבעים ספציפיים לכפתורי חיפוש והחלפה */
+#search-replace-container button:first-of-type {
+    background-color: #a3ffcb; /* טורקיז פסטל לחיפוש */
+    color: var(--text-dark);
+}
+
+#search-replace-container button:last-of-type {
+    background-color: var(--warning); /* צהוב פסטל להחלפה */
+    color: var(--text-dark);
+}
+
+#search-replace-container button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* עיצוב אחיד לכל תיבות הטקסט במערכת - כדי שייראו כמו בחירת הפונט */
+#search-replace-container input,
+input[type="number"], 
+select {
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    border-radius: 10px;
+    outline: none;
+    background-color: white;
+    font-size: 0.9rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* אפקט פוקוס עדין שתואם לשאר האפליקציה */
+#search-replace-container input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(162, 155, 254, 0.1);
+}
+
+/* התאמת רוחב ספציפית לחיפוש והחלפה */
+#search-replace-container input {
+    width: 220px; /* רוחב דומה לתיבת החיפוש של הקבצים */
+    margin: 5px;
+}
+
+/* סידור כותרת ורווחים */
+#search-replace-container h3 {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: var(--text-dark);
+}
+
+#undo{
+  background-color:#cccdcf;
+  color:var(--text-dark);
+  position: sticky;
+    bottom: 30px;    /* מרחק מהתחתית */
+    left: 30px;      /* מרחק מצד שמאל */
+    z-index: 9999;   /* מוודא שהוא תמיד יהיה מעל כל שאר האלמנטים */
 }

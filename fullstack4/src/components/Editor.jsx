@@ -229,10 +229,10 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
 
     return (
         <>
-            <h1>Text Editor</h1>
 
             <Display segments={segments} highlights={highlights} />
-
+            <div id="editor-container">
+            <h1>Editor</h1>
             <TextInput text={plainText} onChange={handleTextChange} />
 
             <Toolbar
@@ -242,9 +242,9 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
                 setApplyMode={changeApplyMode}
             />
             <div id="controls-container">
-                <div id="keyboard-container">
+                <div id="btns-container">
                     <VirtualKeyboard onInsert={insertChar} />
-                </div>
+                
                 <div id="delete-controls">
                     <DeleteControls
                         onDeleteChar={deleteChar}
@@ -252,11 +252,15 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
                         onClear={clearAll}
                     />
                 </div>
-            </div>
+                </div>
+           
             <SearchReplace onFind={handleFind} onReplace={handleReplace} />
-            <button onClick={handleUndo}>
+             </div>
+            <button id="undo"onClick={handleUndo}>
                 Undo
             </button>
+            
+        </div>
         </>
     )
 }
