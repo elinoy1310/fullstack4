@@ -1,9 +1,10 @@
-function Display({ segments, highlights }) {
+function Display({ segments, highlights, fileName }) {
   let currentIndex = 0;
 
   return (
     <div >
-      <h1>Display</h1>
+
+      {fileName && <h2 id="file-name">File Name: {fileName}</h2>}
       
     <div id="display-container">
       {segments.map((seg, i) => {

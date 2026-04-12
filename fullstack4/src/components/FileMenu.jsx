@@ -1,13 +1,12 @@
 import { useState } from "react";
 import FileBar from "./FileBar";
 
-function FileMenu({ segments,setSegments, currentStyle, defaultStyle, setCurrentStyle, setHistory }) {
+function FileMenu({ segments,setSegments, currentStyle, defaultStyle, setCurrentStyle, setHistory, currentFile,setCurrentFile }) {
 
     const [files, setFiles] = useState(() => {
         const saved = localStorage.getItem("files");
         return saved ? JSON.parse(saved) : [];
     });
-    const [currentFile, setCurrentFile] = useState("");
 
     let isSaved= false
 
@@ -89,7 +88,7 @@ function FileMenu({ segments,setSegments, currentStyle, defaultStyle, setCurrent
         onLoad={handleLoad}
         onNew={handleNew}
         />
-        {currentFile && <h2 id="file-name">File Name: {currentFile}</h2>}
+        
 
         </> 
         )

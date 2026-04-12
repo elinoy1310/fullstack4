@@ -6,10 +6,9 @@ import VirtualKeyboard from "./VirtualKeyboard";
 import DeleteControls from "./DeleteControls";
 import SearchReplace from "./SearchReplace";
 
-function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHistory }) {
+function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHistory, setHighlights }) {
 
     const [applyMode, setApplyMode] = useState("all");
-    const [highlights, setHighlights] = useState([]);
 
     const plainText = segments.map((s) => s.text).join("");
 
@@ -228,13 +227,10 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
     };
 
     return (
-        <>
-
-            <Display segments={segments} highlights={highlights} />
+        <>     
             <div id="editor-container">
             <h1>Editor</h1>
             <TextInput text={plainText} onChange={handleTextChange} />
-
             <Toolbar
                 currentStyle={currentStyle}
                 updateStyle={updateStyle}
