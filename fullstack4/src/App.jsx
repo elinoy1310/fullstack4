@@ -2,6 +2,7 @@ import { useState } from "react";
 import FullDisplay from "./components/FullDisplay";
 import FileMenu from "./components/FileMenu";
 import Editor from "./components/Editor";
+import Auth from "./components/Auth";
 
 const defaultStyle = {
   color: "#000000",
@@ -21,35 +22,44 @@ function createEmptyDoc(id) {
   };
 }
 
+// שמירת המסמכים הפתוחים של משתמש ב-localStorage (ללא היסטוריה - לחסוך מקום)
+function saveOpenDocs(username, docs, activeDocId, nextId) {
+  const toSave = docs.map((doc) => ({ ...doc, history: [] }));
+  localStorage.setItem(`openDocs_${username}`, JSON.stringify({ docs: toSave, activeDocId, nextId }));
+}
+
+// טעינת המסמכים הפתוחים של משתמש מה-localStorage
+function loadOpenDocs(username) {
+  const saved = localStorage.getItem(`openDocs_${username}`);
+  if (!saved) return null;
+  try {
+    const { docs, activeDocId, nextId } = JSON.parse(saved);
+    // משחזרים היסטוריה בסיסית לכל מסמך
+    const restoredDocs = docs.map((doc) => ({ ...doc, history: [doc.segments] }));
+    return { docs: restoredDocs, activeDocId, nextId };
+  } catch {
+    return null;
+  }
+}
+
 function App() {
   const [docs, setDocs] = useState([createEmptyDoc(1)]);
   const [activeDocId, setActiveDocId] = useState(1);
-  // const [nextId, setNextId] = useState(2);
   const [openFiles, setOpenFiles] = useState([]);
-  // const [segments, setSegments] = useState([
-  //   {
-  //     text: "",
-  //     style: defaultStyle
-  //   },
-  // ]);
-  // const [currentStyle, setCurrentStyle] = useState(defaultStyle);
-  // const [history, setHistory] = useState([
-  //   [
-  //     {
-  //       text: "",
-  //       style: {
-  //         color: "#000000",
-  //         fontSize: "16px",
-  //         fontFamily: "Arial",
-  //         fontWeight: "normal"
-  //       },
-  //     },
-  //   ],
-  // ]);
+  const [currentUser, setCurrentUser] = useState(() => {
+    return localStorage.getItem("currentUser") || null;
+  });
 
-  const [highlights, setHighlights] = useState([]);
-  const [currentFile, setCurrentFile] = useState("");
+  // חישוב מצב התחלתי של המסמכים לפי המשתמש
+  const getInitialDocsState = (username) => {
+    if (username) {
+      const saved = loadOpenDocs(username);
+      if (saved) return saved; // יש מסמכים שמורים - מחזירים אותם
+    }
+    return { docs: [createEmptyDoc(1)], activeDocId: 1, nextId: 2 };
+  };
 
+  const initial = getInitialDocsState(localStorage.getItem("currentUser"));
   const activeDoc = docs.find((d) => d.id === activeDocId) || docs[0];
 
   const updateDocField = (id, field, valueOrFn) => {
@@ -62,26 +72,52 @@ function App() {
       })
     );
   };
+  // כניסת משתמש - טוען את המסמכים שלו
+  const handleLogin = (username) => {
+    const saved = loadOpenDocs(username);
+    if (saved) {
+      setDocs(saved.docs);
+      setActiveDocId(saved.activeDocId);
+    } else {
+      // משתמש ללא מסמכים שמורים - מתחיל עם מסמך ריק
+      const fresh = createEmptyDoc(1);
+      setDocs([fresh]);
+      setActiveDocId(1);
+    }
+    setCurrentUser(username);
+  };
+
+  // יציאת משתמש - שומר מסמכים פתוחים ומאפס state
+  const handleLogout = () => {
+        const maxId = Math.max(...docs.map(d => d.id), 0);
+    const newId = maxId + 1;
+    saveOpenDocs(currentUser, docs, activeDocId, newId);
+    localStorage.removeItem("currentUser");
+    setCurrentUser(null);
+    const fresh = createEmptyDoc(1);
+    setDocs([fresh]);
+    setActiveDocId(1);
+  };
 
   const handleNewDoc = (loadedSegments = null, fileName = null) => {
 
     const maxId = Math.max(...docs.map(d => d.id), 0);
-const newId = maxId + 1;
+    const newId = maxId + 1;
 
-const newDoc = createEmptyDoc(newId);
+    const newDoc = createEmptyDoc(newId);
 
 
     if (loadedSegments && Array.isArray(loadedSegments)) {
       newDoc.segments = loadedSegments;
       newDoc.history = [loadedSegments];
-       // 🔥 קח את התו האחרון
-  const lastSeg = loadedSegments[loadedSegments.length - 1];
+      // 🔥 קח את התו האחרון
+      const lastSeg = loadedSegments[loadedSegments.length - 1];
 
-  if (lastSeg && lastSeg.text.length > 0) {
-    newDoc.currentStyle = lastSeg.style;
-  } else {
-    newDoc.currentStyle = defaultStyle;
-  }
+      if (lastSeg && lastSeg.text.length > 0) {
+        newDoc.currentStyle = lastSeg.style;
+      } else {
+        newDoc.currentStyle = defaultStyle;
+      }
     }
 
     if (fileName) {
@@ -91,19 +127,13 @@ const newDoc = createEmptyDoc(newId);
 
     setDocs(prev => [...prev, newDoc]);
     setActiveDocId(newId);
-    // setNextId(n => n + 1);
-    
-    //     const newDoc = createEmptyDoc(nextId);
-    // setDocs((prev) => [...prev, newDoc]);
-    // setActiveDocId(nextId);
-    // setNextId((n) => n + 1);
 
   };
 
   const handleCloseDoc = (id) => {
     const doc = docs.find((d) => d.id === id);
 
-    if (doc.history.length > 1 ) {
+    if (doc.history.length > 1) {
       const wantSave = window.confirm(`Save "${doc.name}" before closing?`);
       if (wantSave) {
         const fileName = doc.name.startsWith("untitled") ? prompt("File name:") : doc.name;
@@ -122,11 +152,11 @@ const newDoc = createEmptyDoc(newId);
     if (remaining.length === 0) {
       // אם נסגר המסמך האחרון - פותחים מסמך ריק חדש
       const maxId = Math.max(...docs.map(d => d.id), 0);
-const newId = maxId + 1;
+      const newId = maxId + 1;
       const fresh = createEmptyDoc(newId);
       setDocs([fresh]);
       setActiveDocId(fresh.id);
-      // setNextId((n) => n + 1);
+
     } else {
       setDocs(remaining);
       // אם נסגר המסמך הפעיל - עוברים לאחרון ברשימה
@@ -136,15 +166,25 @@ const newId = maxId + 1;
     }
 
     if (doc.name) {
-  setOpenFiles(prev => prev.filter(f => f !== doc.name));
-}
+      setOpenFiles(prev => prev.filter(f => f !== doc.name));
+    }
   };
   const handleRename = (name) => {
-  updateDocField(activeDoc.id, "name", name);
-};
+    updateDocField(activeDoc.id, "name", name);
+    setOpenFiles(prev => [...prev, name]);
+  };
+
+  if (!currentUser) {
+    return <Auth onLogin={handleLogin} />;
+  }
 
   return (
     <div id="main-app">
+      {/* שורת משתמש - שם + כפתור התנתקות */}
+      <div id="user-bar">
+        <span>👤 {currentUser}</span>
+        <button onClick={handleLogout}>Logout</button>
+      </div>
 
       {/* FileMenu אחד בלבד - ללא key שמשתנה! */}
       <FileMenu
@@ -159,7 +199,8 @@ const newId = maxId + 1;
         openFiles={openFiles}
         onRename={handleRename}
         currentFile={activeDoc.name}
-  setCurrentFile={(v) => updateDocField(activeDoc.id, "name", v)}
+        setCurrentFile={(v) => updateDocField(activeDoc.id, "name", v)}
+        currentUser={currentUser}
       />
 
       <FullDisplay docs={docs} setActiveDocId={setActiveDocId} handleCloseDoc={handleCloseDoc} activeDocId={activeDocId} />

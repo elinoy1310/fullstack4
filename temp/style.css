@@ -5,16 +5,11 @@
   --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(255, 255, 255, 0.5);
   --text-dark: #2d3436;
-  --primary: #a29bfe;
-  /* פסטל סגול */
-  --secondary: #81ecec;
-  /* פסטל טורקיז */
-  --danger: #ff7675;
-  /* פסטל אדום */
-  --success: #55efc4;
-  /* פסטל ירוק */
-  --warning: #ffeaa7;
-  /* פסטל צהוב */
+  --primary: #a29bfe; /* פסטל סגול */
+  --secondary: #81ecec; /* פסטל טורקיז */
+  --danger: #ff7675; /* פסטל אדום */
+  --success: #55efc4; /* פסטל ירוק */
+  --warning: #ffeaa7; /* פסטל צהוב */
   --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
   --radius: 20px;
 }
@@ -46,7 +41,7 @@ body {
 h1 {
   text-align: center;
   font-weight: 800;
-  font-size: 1.75rem;
+  font-size: 2.5rem;
   color: var(--text-dark);
   text-shadow: #908cdd 1px 1px 3px;
   /* background: linear-gradient(to right, #675cff,#c5c2eb);
@@ -60,11 +55,11 @@ h1 {
 /* אזור התצוגה המרכזי */
 #display-container {
   background: white;
-  /* min-height: 200px; */
+  min-height: 200px;
   padding: 25px;
   border-radius: var(--radius);
-  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.02);
-  /* margin-bottom: 25px; */
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+  margin-bottom: 25px;
   font-size: 1.2rem;
   line-height: 1.6;
   border: 1px solid #eee;
@@ -72,18 +67,13 @@ h1 {
   word-break: break-word;
   display: flex;
   /* align-items: center; */
-  width: 100%;
-  height: 90%;
-  overflow-wrap: break-word;
-
-
 }
 
 .highlight {
   background-color: var(--warning);
   padding: 2px 5px;
   border-radius: 6px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 /* תיבת הטקסט */
@@ -118,7 +108,7 @@ h1 {
   margin-bottom: 0px;
 }
 
-#search-replace-container {
+ #search-replace-container{
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
@@ -129,22 +119,20 @@ h1 {
   border-radius: var(--radius);
 
 
-}
-
-#file-bar-container {
+ }
+#file-bar-container{
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
   align-items: center;
-  background: #cccdcf;
+  background:  #cccdcf;
   flex-direction: row;
   justify-content: space-between;
   border-radius: 0px 0px var(--radius) var(--radius);
   padding: 20px;
   margin-bottom: 20px;
 }
-
-.file-controls {
+.file-controls{
   display: flex;
   flex-direction: row;
   gap: 15px;
@@ -162,7 +150,7 @@ button {
   transition: all 0.2s ease;
   background: white;
   color: var(--text-dark);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -170,13 +158,13 @@ button {
 
 button:hover {
   /* transform: translateY(-3px); */
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  
 }
 
-#file-bar-container button:hover {
+#file-bar-container button:hover{
   transform: translateY(0);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
   filter: brightness(1.05);
   background-color: #dcfcea;
 }
@@ -186,32 +174,18 @@ button:active {
 }
 
 /* צבעי כפתורים ספציפיים */
-button[onClick*=handleUndo] {
-  background: var(--primary);
-  color: white;
-  width: 100%;
-  margin-top: 10px;
-}
-
-.delete-btn,
-[onClick*=onClear] {
-  background: var(--danger);
-  color: white;
-}
-
-button[onClick*=onSave] {
-  background: var(--success);
-  color: var(--text-dark);
-}
+button[onClick*="handleUndo"] { background: var(--primary); color: white; width: 100%; margin-top: 10px; }
+.delete-btn, [onClick*="onClear"] { background: var(--danger); color: white; }
+button[onClick*="onSave"] { background: var(--success); color: var(--text-dark); }
 
 #keyboard-container {
   margin-top: 20px;
-  padding: 0;
+  padding: 0 ;
   width: 75vh;
 
 }
 
-h3 {
+h3{
   text-align: center;
 }
 
@@ -223,20 +197,20 @@ h3 {
   margin-bottom: 20px;
   background: rgba(255, 255, 255, 0.4);
   border-radius: var(--radius);
-  margin-top: 5px;
-  padding: 25px 0px;
-
+   margin-top: 5px;
+padding: 25px 0px;
+ 
 }
 
-#btns-container {
+#btns-container{
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background: rgba(255, 255, 255, 0.4);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding-bottom: 20px;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding-bottom: 20px;
 }
 
 /* מקשי מקלדת */
@@ -246,11 +220,6 @@ h3 {
   font-size: 1.4rem;
   background: white;
   border-radius: 12px;
-}
-
-.key:hover {
-  background-color: rgb(190, 190, 190);
-  transform: translateY(-2px);
 }
 
 #category-buttons {
@@ -283,7 +252,6 @@ h3 {
 #file-search-container {
   position: relative;
 }
-
 #file-search-container input {
   width: 200px;
   padding: 8px 12px;
@@ -291,18 +259,17 @@ h3 {
   border: 1px solid #ddd;
   outline: none;
 }
-
-#file-search-container input:focus {
-  outline: #00b34d;
+#file-search-container input:focus{
+  outline:  #00b34d;
 }
 
 .file-dropdown {
   position: absolute;
   top: 100%;
   left: 0;
-  right: 0;
+  right: 0 ;
   background: white;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
   z-index: 100;
   overflow-y: scroll;
   margin-top: 1px;
@@ -317,11 +284,11 @@ h3 {
 }
 
 .file-dropdown-item:hover {
-  background: #dcfcea;
+  background:  #dcfcea;
 }
 
 /* Inputs קטנים (צבע, מספר וכו') */
-input[type=color] {
+input[type="color"] {
   border: none;
   /* width: 40px;
   height: 40px; */
@@ -330,22 +297,20 @@ input[type=color] {
   /* border-radius: 30%; */
 }
 
-input[type=number],
-select,
-input[type=text] {
+input[type="number"], select, input[type="text"] {
   border: 1px solid #ddd;
   padding: 8px 12px;
   border-radius: 10px;
   outline: none;
 }
 
-#file-name {
+#file-name{
   text-align: center;
   font-size: 2rem;
   color: var(--text-dark);
 }
 
-.bold-clicked {
+.bold-clicked{
   font-weight: bold;
   border: 1px solid black;
 }
@@ -354,10 +319,8 @@ input[type=text] {
 .mode-toggle-container {
   position: relative;
   display: flex;
-  background: #cad0db;
-  /* צבע רקע ניטרלי */
-  border-radius: 100px;
-  /* צורת גלולה */
+  background: #cad0db; /* צבע רקע ניטרלי */
+  border-radius: 100px; /* צורת גלולה */
   padding: 4px;
   width: fit-content;
   margin: 0px;
@@ -368,10 +331,9 @@ input[type=text] {
 /* הכפתורים בתוך המתג */
 .toggle-btn {
   position: relative;
-  z-index: 2;
-  /* מעל הסליידר */
-  background: transparent;
-  box-shadow: none !important;
+  z-index: 2; /* מעל הסליידר */
+  background: transparent; 
+    box-shadow: none !important;
   color: var(--text-muted);
   padding: 10px 24px;
   font-size: 0.9rem;
@@ -381,8 +343,7 @@ input[type=text] {
 }
 
 .toggle-btn.active {
-  color: black;
-  /* טקסט לבן כשהכפתור פעיל */
+  color: black; /* טקסט לבן כשהכפתור פעיל */
   font-weight: bold;
   /* text-shadow: white 1px 1px 1px; */
   background: #7dd8f6;
@@ -391,7 +352,7 @@ input[type=text] {
 
 .toggle-btn.active:hover {
   filter: brightness(1);
-  text-shadow: none;
+  text-shadow:none;
   transform: none;
 }
 
@@ -400,14 +361,11 @@ input[type=text] {
   position: absolute;
   top: 4px;
   bottom: 4px;
-  width: calc(50% - 4px);
-  /* חצי מהרוחב */
-  background: var(--accent-bold);
-  /* הצבע הסגול שלנו */
+  width: calc(50% - 4px); /* חצי מהרוחב */
+  background: var(--accent-bold); /* הצבע הסגול שלנו */
   border-radius: 100px;
   z-index: 1;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  /* תנועה קפיצית מגניבה */
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* תנועה קפיצית מגניבה */
 }
 
 /* מיקום הסליידר לפי המצב */
@@ -433,111 +391,105 @@ input[type=text] {
 
 /* שדרוג הקונטיינר של חיפוש והחלפה */
 #search-replace-container {
-  background: rgba(255, 255, 255, 0.4);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--shadow);
-  margin-top: 0px;
-  padding: 25px;
-  /* ביטול flex-direction column אם רוצים מראה אופקי יותר, או השארה למראה נקי */
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow);
+    margin-top: 0px;
+    padding: 25px;
+    /* ביטול flex-direction column אם רוצים מראה אופקי יותר, או השארה למראה נקי */
 }
 
 /* עיצוב כותרת המשנה */
 #search-replace-container h3 {
-  color: var(--text-dark);
-  font-size: 1.2rem;
-  display: inline-block;
-
+    color: var(--text-dark);
+    font-size: 1.2rem;
+    display: inline-block;
+    
 }
 
 /* שדרוג האינפוטים בתוך החיפוש */
 #search-replace-container input {
-  width: 100%;
-  max-width: 400px;
-  margin-bottom: 5px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.8);
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.8);
 }
 
 #search-replace-container input:focus {
-  border-color: var(--primary);
-  background: white;
-  box-shadow: 0 0 10px rgba(162, 155, 254, 0.2);
-  transform: scale(1.01);
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 10px rgba(162, 155, 254, 0.2);
+    transform: scale(1.01);
 }
 
 /* סידור הכפתורים בשורה אחת */
 #search-replace-container div {
-  display: flex;
-  gap: 12px;
-  margin-top: 10px;
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
 }
 
 /* צבעים ספציפיים לכפתורי חיפוש והחלפה */
 #search-replace-container button:first-of-type {
-  background-color: #a3ffcb;
-  /* טורקיז פסטל לחיפוש */
-  color: var(--text-dark);
+    background-color: #a3ffcb; /* טורקיז פסטל לחיפוש */
+    color: var(--text-dark);
 }
 
 #search-replace-container button:last-of-type {
-  background-color: var(--warning);
-  /* צהוב פסטל להחלפה */
-  color: var(--text-dark);
+    background-color: var(--warning); /* צהוב פסטל להחלפה */
+    color: var(--text-dark);
 }
 
 #search-replace-container button:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.05);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 /* עיצוב אחיד לכל תיבות הטקסט במערכת - כדי שייראו כמו בחירת הפונט */
 #search-replace-container input,
-input[type=number],
+input[type="number"], 
 select {
-  border: 1px solid #ddd;
-  padding: 8px 12px;
-  border-radius: 10px;
-  outline: none;
-  background-color: white;
-  font-size: 0.9rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    border-radius: 10px;
+    outline: none;
+    background-color: white;
+    font-size: 0.9rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 /* אפקט פוקוס עדין שתואם לשאר האפליקציה */
 #search-replace-container input:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(162, 155, 254, 0.1);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(162, 155, 254, 0.1);
 }
 
 /* התאמת רוחב ספציפית לחיפוש והחלפה */
 #search-replace-container input {
-  width: 220px;
-  /* רוחב דומה לתיבת החיפוש של הקבצים */
-  margin: 5px;
+    width: 220px; /* רוחב דומה לתיבת החיפוש של הקבצים */
+    margin: 5px;
 }
 
 /* סידור כותרת ורווחים */
 #search-replace-container h3 {
-  font-size: 1.1rem;
-  margin-bottom: 15px;
-  color: var(--text-dark);
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: var(--text-dark);
 }
 
-#undo {
-  background-color: #cccdcf;
-  color: var(--text-dark);
+#undo{
+  background-color:#cccdcf;
+  color:var(--text-dark);
   position: sticky;
-  bottom: 30px;
-  /* מרחק מהתחתית */
-  left: 30px;
-  /* מרחק מצד שמאל */
-  z-index: 9999;
-  /* מוודא שהוא תמיד יהיה מעל כל שאר האלמנטים */
+    bottom: 30px;    /* מרחק מהתחתית */
+    left: 30px;      /* מרחק מצד שמאל */
+    z-index: 9999;   /* מוודא שהוא תמיד יהיה מעל כל שאר האלמנטים */
 }
 
-#category-label {
+#category-label{
   font-size: 1.1rem;
   font-weight: 600;
   text-decoration: underline;
@@ -547,186 +499,79 @@ select {
 #search-replace-container {
   margin-top: 0px;
 }
-
-#full-display-container {
-  display: flex;
-  gap: 10px;
-  padding: 10px;
-  flex-wrap: wrap;
-}
-
-.doc {
-  flex: 1;
-  min-width: 200px;
-  border-radius: 8px;
-  padding: 10px;
-  cursor: pointer;
-  border: 1px solid gray;
-  background: white;
-}
-
-.doc-active {
-  border: 3px solid #cccdcf;
-  background: #f1f2f6;
-}
-
-.doc-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.close-btn {
-  background: salmon;
-  color: white;
-  padding: 2px 8px;
-  font-size: 0.8rem;
-}
-
-.doc {
-  transition: all 0.3s;
-}
-
-.doc.doc-minimized {
-  width: 120px;
-  height: 40px;
-  overflow: hidden;
-  padding: 8px;
-  border: 1px solid gray;
-  cursor: pointer;
-}
-
-.doc.doc-active {
-  flex: 2;
-  resize: both;
-  overflow: auto;
-
-}
-
-.active-doc-card {
-  width: 100%;
-  height: 100%;
-  overflow-wrap: break-word;
-  padding: 20px;
-}
-
-/* ================= AUTH CONTAINER ================= */
-
+/* ===== Auth ===== */
 #auth-container {
-  max-width: 400px;
-  margin: 150px auto 0;
-  padding: 30px;
-
-  background: var(--glass-bg);
-  backdrop-filter: blur(40px);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-
   display: flex;
   flex-direction: column;
-  gap: 15px;
   align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 12px;
+  font-family: Arial, sans-serif;
+  direction: rtl;
 }
 
-/* כותרת */
 #auth-container h2 {
-  margin: 0;
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--text-dark);
+  font-size: 1.5rem;
+  margin-bottom: 8px;
 }
 
-/* אינפוטים */
 #auth-container input {
-  width: 100%;
-  padding: 12px 15px;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  outline: none;
+  width: 260px;
+  padding: 8px 12px;
   font-size: 1rem;
-
-  background: rgba(255, 255, 255, 0.7);
-  transition: all 0.25s ease;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
-#auth-container input:focus {
-  border-color: var(--primary);
-  background: white;
-  box-shadow: 0 0 10px rgba(162, 155, 254, 0.2);
-  transform: scale(1.02);
-}
-
-/* כפתור */
 #auth-container button {
-  width: 100%;
-  background: rgb(117, 178, 219);
+  width: 260px;
+  padding: 10px;
+  font-size: 1rem;
+  background: #4a6cf7;
   color: white;
-  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 #auth-container button:hover {
-  filter: brightness(1.05);
-  transform: translateY(-2px);
+  background: #3a5ce5;
 }
 
-/* שגיאה */
 .auth-error {
-  color: var(--danger);
-  background: rgba(255, 118, 117, 0.1);
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-size: 1rem;
-  width: 100%;
-  text-align: center;
-  font-weight: 500;
+  color: red;
+  font-size: 0.9rem;
 }
 
-
-
-/* מעבר בין login/register */
 .auth-toggle {
-  color: rgb(117, 178, 219);
+  color: #4a6cf7;
   cursor: pointer;
-  font-weight: 600;
-}
-
-.auth-toggle:hover {
   text-decoration: underline;
 }
 
-/* ================= USER BAR ================= */
+/* ===== User Bar ===== */
 #user-bar {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(20px);
-
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius) var(--radius) 0 0;
-
-  padding: 12px 20px;
-  margin: 10px 0 0;
-
-  box-shadow: var(--shadow);
+  gap: 12px;
+  padding: 6px 16px;
+  background: #f0f4ff;
+  border-bottom: 1px solid #ccd;
+  font-family: Arial, sans-serif;
+  direction: rtl;
 }
 
-/* שם משתמש */
-#user-bar span {
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-/* כפתור logout */
 #user-bar button {
-  background: var(--danger);
+  padding: 4px 12px;
+  background: #e55;
   color: white;
-  padding: 8px 14px;
-  border-radius: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 #user-bar button:hover {
-  filter: brightness(1.05);
+  background: #c33;
 }

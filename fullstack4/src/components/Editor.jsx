@@ -178,36 +178,123 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
 
         // הסרת highlight אחרי 2 שניות
         setTimeout(() => setHighlights([]), 2000);
+        return matches;
     };
 
-    const handleReplace = (searchText, replaceText) => {
+//     const handleReplace = (searchText, replaceText) => {
+//   if (!searchText) return;
+
+//   const newSegments = [];
+
+//   segments.forEach(seg => {
+//     let text = seg.text;
+
+//     if (!text.includes(searchText)) {
+//       newSegments.push(seg);
+//       return;
+//     }
+
+//     const parts = text.split(searchText);
+
+//     parts.forEach((part, i) => {
+//       if (part) {
+//         newSegments.push({ text: part, style: seg.style });
+//       }
+
+//       if (i < parts.length - 1) {
+//         newSegments.push({ text: replaceText, style: seg.style });
+//       }
+//     });
+//   });
+
+//   setSegments(newSegments);
+//   pushToHistory(newSegments);
+// };
+const handleReplace = (searchText, replaceText) => {
   if (!searchText) return;
 
-  const newSegments = [];
+  // 🔹 שלב 1: בניית טקסט מלא + מיפוי אינדקסים לסטיילים
+  let fullText = "";
+  const charMap = []; // לכל תו → שומר את הסטייל שלו
 
   segments.forEach(seg => {
-    let text = seg.text;
-
-    if (!text.includes(searchText)) {
-      newSegments.push(seg);
-      return;
+    for (let i = 0; i < seg.text.length; i++) {
+      fullText += seg.text[i];
+      charMap.push(seg.style);
     }
-
-    const parts = text.split(searchText);
-
-    parts.forEach((part, i) => {
-      if (part) {
-        newSegments.push({ text: part, style: seg.style });
-      }
-
-      if (i < parts.length - 1) {
-        newSegments.push({ text: replaceText, style: seg.style });
-      }
-    });
   });
 
-  setSegments(newSegments);
-  pushToHistory(newSegments);
+  // 🔹 שלב 2: חיפוש כל ההתאמות
+  const matches = [];
+  let startIndex = 0;
+
+  while (true) {
+    const index = fullText.indexOf(searchText, startIndex);
+    if (index === -1) break;
+
+    matches.push(index);
+    startIndex = index + searchText.length;
+  }
+
+  if (matches.length === 0) return;
+
+  // 🔹 שלב 3: בניית segments חדשים
+  const newSegments = [];
+  let currentIndex = 0;
+
+  matches.forEach(matchIndex => {
+    // טקסט לפני ההתאמה
+    if (matchIndex > currentIndex) {
+      const textPart = fullText.slice(currentIndex, matchIndex);
+
+      for (let i = 0; i < textPart.length; i++) {
+        newSegments.push({
+          text: textPart[i],
+          style: charMap[currentIndex + i],
+        });
+      }
+    }
+
+    // 🔥 הטקסט המוחלף - עם הסטייל של התו הראשון
+    const styleOfMatch = charMap[matchIndex];
+
+    newSegments.push({
+      text: replaceText,
+      style: styleOfMatch,
+    });
+
+    currentIndex = matchIndex + searchText.length;
+  });
+
+  // טקסט אחרי ההתאמות
+  if (currentIndex < fullText.length) {
+    const textPart = fullText.slice(currentIndex);
+
+    for (let i = 0; i < textPart.length; i++) {
+      newSegments.push({
+        text: textPart[i],
+        style: charMap[currentIndex + i],
+      });
+    }
+  }
+
+  // 🔹 שלב 4: איחוד תווים עם אותו סטייל (אופטימיזציה)
+  const mergedSegments = [];
+  newSegments.forEach(seg => {
+    const last = mergedSegments[mergedSegments.length - 1];
+
+    if (
+      last &&
+      JSON.stringify(last.style) === JSON.stringify(seg.style)
+    ) {
+      last.text += seg.text;
+    } else {
+      mergedSegments.push({ ...seg });
+    }
+  });
+
+  setSegments(mergedSegments);
+  pushToHistory(mergedSegments);
 };
 
     const pushToHistory = (segmentsToSave) => {
