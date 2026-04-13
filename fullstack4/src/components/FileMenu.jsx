@@ -2,7 +2,7 @@ import { useState } from "react";
 import FileBar from "./FileBar";
 
 // מנהל קבצים - שמירה, טעינה, פתיחת מסמך חדש
-function FileMenu({ segments, setHistory, onNewDoc, activeDocName, openFiles, onRename, currentFile, setCurrentFile, currentUser }) {
+function FileMenu({ segments, setHistory, onNewDoc, openFiles, onRename, currentFile, setCurrentFile, currentUser }) {
 
     // טוען את רשימת הקבצים של המשתמש בעת יצירת הקומפוננטה
     // כיוון ש-App מעביר key={currentUser}, הקומפוננטה נוצרת מחדש בכל החלפת משתמש
@@ -52,7 +52,7 @@ function FileMenu({ segments, setHistory, onNewDoc, activeDocName, openFiles, on
             alert("File already open");
             return;
         }
-        const data =  localStorage.getItem(`file_${currentUser}_${fileName}`);
+        const data = localStorage.getItem(`file_${currentUser}_${fileName}`);
         if (!data) return;
         const parsed = JSON.parse(data);
         // אם כבר פתוח → לא לפתוח שוב
@@ -72,7 +72,7 @@ function FileMenu({ segments, setHistory, onNewDoc, activeDocName, openFiles, on
                 onSave={handleSave}
                 onSaveAs={handleSaveAs}
                 onLoad={handleLoad}
-                onNew={onNewDoc} // מועבר ישירות מ-App
+                onNew={onNewDoc} 
             />
 
         </>

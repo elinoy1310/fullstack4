@@ -4,6 +4,7 @@ import FileMenu from "./components/FileMenu";
 import Editor from "./components/Editor";
 import Auth from "./components/Auth";
 
+
 const defaultStyle = {
   color: "#000000",
   fontSize: "16px",
@@ -43,26 +44,16 @@ function loadOpenDocs(username) {
 }
 
 function App() {
-  const [docs, setDocs] = useState([createEmptyDoc(1)]);
+  const [docs, setDocs] = useState([createEmptyDoc(1)]); //
   const [activeDocId, setActiveDocId] = useState(1);
   const [openFiles, setOpenFiles] = useState([]);
   const [currentUser, setCurrentUser] = useState(() => {
     return localStorage.getItem("currentUser") || null;
   });
 
-  // חישוב מצב התחלתי של המסמכים לפי המשתמש
-  const getInitialDocsState = (username) => {
-    if (username) {
-      const saved = loadOpenDocs(username);
-      if (saved) return saved; // יש מסמכים שמורים - מחזירים אותם
-    }
-    return { docs: [createEmptyDoc(1)], activeDocId: 1, nextId: 2 };
-  };
-
-  const initial = getInitialDocsState(localStorage.getItem("currentUser"));
   const activeDoc = docs.find((d) => d.id === activeDocId) || docs[0];
 
-  const updateDocField = (id, field, valueOrFn) => {
+  const updateDocField = (id, field, valueOrFn) => { //
     setDocs((prev) =>
       prev.map((doc) => {
         if (doc.id !== id) return doc;
@@ -72,6 +63,8 @@ function App() {
       })
     );
   };
+
+  // move to Auth?
   // כניסת משתמש - טוען את המסמכים שלו
   const handleLogin = (username) => {
     const saved = loadOpenDocs(username);
@@ -86,10 +79,9 @@ function App() {
     }
     setCurrentUser(username);
   };
-
   // יציאת משתמש - שומר מסמכים פתוחים ומאפס state
   const handleLogout = () => {
-        const maxId = Math.max(...docs.map(d => d.id), 0);
+    const maxId = Math.max(...docs.map(d => d.id), 0);
     const newId = maxId + 1;
     saveOpenDocs(currentUser, docs, activeDocId, newId);
     localStorage.removeItem("currentUser");
@@ -99,6 +91,7 @@ function App() {
     setActiveDocId(1);
   };
 
+  // move to FileMenu?
   const handleNewDoc = (loadedSegments = null, fileName = null) => {
 
     const maxId = Math.max(...docs.map(d => d.id), 0);
@@ -130,6 +123,7 @@ function App() {
 
   };
 
+  // move to FullDisplay?
   const handleCloseDoc = (id) => {
     const doc = docs.find((d) => d.id === id);
 
@@ -138,10 +132,11 @@ function App() {
       if (wantSave) {
         const fileName = doc.name.startsWith("untitled") ? prompt("File name:") : doc.name;
         if (fileName) {
-          localStorage.setItem(`file_${fileName}`, JSON.stringify(doc.segments));
-          const files = JSON.parse(localStorage.getItem("files") || "[]");
+          localStorage.setItem(`file_${currentUser}_${fileName}`, JSON.stringify(doc.segments));
+          const filesKey = `files_${currentUser}`;
+          const files = JSON.parse(localStorage.getItem(filesKey) || "[]");
           if (!files.includes(fileName)) {
-            localStorage.setItem("files", JSON.stringify([...files, fileName]));
+            localStorage.setItem(filesKey, JSON.stringify([...files, fileName]));
           }
         }
       }
@@ -169,6 +164,7 @@ function App() {
       setOpenFiles(prev => prev.filter(f => f !== doc.name));
     }
   };
+
   const handleRename = (name) => {
     updateDocField(activeDoc.id, "name", name);
     setOpenFiles(prev => [...prev, name]);
@@ -186,16 +182,10 @@ function App() {
         <button onClick={handleLogout}>Logout</button>
       </div>
 
-      {/* FileMenu אחד בלבד - ללא key שמשתנה! */}
       <FileMenu
         segments={activeDoc.segments}
-        setSegments={(v) => updateDocField(activeDoc.id, "segments", v)}
-        currentStyle={activeDoc.currentStyle}
-        defaultStyle={defaultStyle}
-        setCurrentStyle={(v) => updateDocField(activeDoc.id, "currentStyle", v)}
         setHistory={(v) => updateDocField(activeDoc.id, "history", v)}
         onNewDoc={handleNewDoc}
-        activeDocName={activeDoc.name}
         openFiles={openFiles}
         onRename={handleRename}
         currentFile={activeDoc.name}
@@ -203,18 +193,19 @@ function App() {
         currentUser={currentUser}
       />
 
-      <FullDisplay docs={docs} setActiveDocId={setActiveDocId} handleCloseDoc={handleCloseDoc} activeDocId={activeDocId} />
+      <FullDisplay
+        docs={docs}
+        setActiveDocId={setActiveDocId}
+        handleCloseDoc={handleCloseDoc}
+        activeDocId={activeDocId} />
 
-      {/* עורך אחד בתחתית - תמיד עובד על המסמך הפעיל */}
       <Editor
-        key={activeDoc.id}
         segments={activeDoc.segments}
         setSegments={(v) => updateDocField(activeDoc.id, "segments", v)}
         currentStyle={activeDoc.currentStyle}
         setCurrentStyle={(v) => updateDocField(activeDoc.id, "currentStyle", v)}
         setHistory={(v) => updateDocField(activeDoc.id, "history", v)}
         setHighlights={(v) => updateDocField(activeDoc.id, "highlights", v)}
-
       />
     </div>
   );

@@ -3,7 +3,6 @@ function Toolbar({ currentStyle, updateStyle, applyMode, setApplyMode }) {
     <div id="toolbar-container"    >
       <h3>Editing Tools</h3>
 
-      {/* צבע */}
       <label>
         Color:
         <input
@@ -13,7 +12,6 @@ function Toolbar({ currentStyle, updateStyle, applyMode, setApplyMode }) {
         />
       </label>
 
-      {/* גודל */}
       <label className="tool-lbl" >
         Size:
         <input
@@ -25,7 +23,6 @@ function Toolbar({ currentStyle, updateStyle, applyMode, setApplyMode }) {
         />
       </label>
 
-      {/* פונט */}
       <label className="tool-lbl">
         Font:
         <select
@@ -56,7 +53,6 @@ function Toolbar({ currentStyle, updateStyle, applyMode, setApplyMode }) {
         Bold
       </button>
 
-      {/* מצב עריכה - Toggle Switch */}
       <div className="mode-toggle-container">
         <div className={`toggle-slider ${applyMode}`}></div>
 

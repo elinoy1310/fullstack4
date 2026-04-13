@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Display from "./Display";
 import TextInput from "./TextInput";
 import Toolbar from "./Toolbar";
 import VirtualKeyboard from "./VirtualKeyboard";
@@ -90,7 +89,6 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
     };
 
     // ---delete---
-    // מחיקת תו
     const deleteChar = () => {
         setSegments((prev) => {
             const updated = [...prev];
@@ -106,7 +104,6 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
         });
     };
 
-    // מחיקת מילה
     const deleteWord = () => {
         setSegments((prev) => {
             // כל הטקסט
@@ -149,7 +146,6 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
 
     };
 
-    // מחיקת הכל
     const clearAll = () => {
         const updated = [
             { text: "", style: currentStyle }
@@ -176,126 +172,124 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
 
         setHighlights(matches);
 
-        // הסרת highlight אחרי 2 שניות
         setTimeout(() => setHighlights([]), 2000);
         return matches;
     };
 
-//     const handleReplace = (searchText, replaceText) => {
-//   if (!searchText) return;
+    //   if (!searchText) return;
 
-//   const newSegments = [];
+    //   const newSegments = [];
 
-//   segments.forEach(seg => {
-//     let text = seg.text;
+    //   segments.forEach(seg => {
+    //     let text = seg.text;
 
-//     if (!text.includes(searchText)) {
-//       newSegments.push(seg);
-//       return;
-//     }
+    //     if (!text.includes(searchText)) {
+    //       newSegments.push(seg);
+    //       return;
+    //     }
 
-//     const parts = text.split(searchText);
+    //     const parts = text.split(searchText);
 
-//     parts.forEach((part, i) => {
-//       if (part) {
-//         newSegments.push({ text: part, style: seg.style });
-//       }
+    //     parts.forEach((part, i) => {
+    //       if (part) {
+    //         newSegments.push({ text: part, style: seg.style });
+    //       }
 
-//       if (i < parts.length - 1) {
-//         newSegments.push({ text: replaceText, style: seg.style });
-//       }
-//     });
-//   });
+    //       if (i < parts.length - 1) {
+    //         newSegments.push({ text: replaceText, style: seg.style });
+    //       }
+    //     });
+    //   });
 
-//   setSegments(newSegments);
-//   pushToHistory(newSegments);
-// };
-const handleReplace = (searchText, replaceText) => {
-  if (!searchText) return;
+    //   setSegments(newSegments);
+    //   pushToHistory(newSegments);
+    // };
+    const handleReplace = (searchText, replaceText) => {
+        if (!searchText) return;
 
-  // 🔹 שלב 1: בניית טקסט מלא + מיפוי אינדקסים לסטיילים
-  let fullText = "";
-  const charMap = []; // לכל תו → שומר את הסטייל שלו
+        // 🔹 שלב 1: בניית טקסט מלא + מיפוי אינדקסים לסטיילים
+        let fullText = "";
+        const charMap = []; // לכל תו → שומר את הסטייל שלו
 
-  segments.forEach(seg => {
-    for (let i = 0; i < seg.text.length; i++) {
-      fullText += seg.text[i];
-      charMap.push(seg.style);
-    }
-  });
-
-  // 🔹 שלב 2: חיפוש כל ההתאמות
-  const matches = [];
-  let startIndex = 0;
-
-  while (true) {
-    const index = fullText.indexOf(searchText, startIndex);
-    if (index === -1) break;
-
-    matches.push(index);
-    startIndex = index + searchText.length;
-  }
-
-  if (matches.length === 0) return;
-
-  // 🔹 שלב 3: בניית segments חדשים
-  const newSegments = [];
-  let currentIndex = 0;
-
-  matches.forEach(matchIndex => {
-    // טקסט לפני ההתאמה
-    if (matchIndex > currentIndex) {
-      const textPart = fullText.slice(currentIndex, matchIndex);
-
-      for (let i = 0; i < textPart.length; i++) {
-        newSegments.push({
-          text: textPart[i],
-          style: charMap[currentIndex + i],
+        segments.forEach(seg => {
+            for (let i = 0; i < seg.text.length; i++) {
+                fullText += seg.text[i];
+                charMap.push(seg.style);
+            }
         });
-      }
-    }
 
-    // 🔥 הטקסט המוחלף - עם הסטייל של התו הראשון
-    const styleOfMatch = charMap[matchIndex];
+        // 🔹 שלב 2: חיפוש כל ההתאמות
+        const matches = [];
+        let startIndex = 0;
 
-    newSegments.push({
-      text: replaceText,
-      style: styleOfMatch,
-    });
+        while (true) {
+            const index = fullText.indexOf(searchText, startIndex);
+            if (index === -1) break;
 
-    currentIndex = matchIndex + searchText.length;
-  });
+            matches.push(index);
+            startIndex = index + searchText.length;
+        }
 
-  // טקסט אחרי ההתאמות
-  if (currentIndex < fullText.length) {
-    const textPart = fullText.slice(currentIndex);
+        if (matches.length === 0) return;
 
-    for (let i = 0; i < textPart.length; i++) {
-      newSegments.push({
-        text: textPart[i],
-        style: charMap[currentIndex + i],
-      });
-    }
-  }
+        // 🔹 שלב 3: בניית segments חדשים
+        const newSegments = [];
+        let currentIndex = 0;
 
-  // 🔹 שלב 4: איחוד תווים עם אותו סטייל (אופטימיזציה)
-  const mergedSegments = [];
-  newSegments.forEach(seg => {
-    const last = mergedSegments[mergedSegments.length - 1];
+        matches.forEach(matchIndex => {
+            // טקסט לפני ההתאמה
+            if (matchIndex > currentIndex) {
+                const textPart = fullText.slice(currentIndex, matchIndex);
 
-    if (
-      last &&
-      JSON.stringify(last.style) === JSON.stringify(seg.style)
-    ) {
-      last.text += seg.text;
-    } else {
-      mergedSegments.push({ ...seg });
-    }
-  });
+                for (let i = 0; i < textPart.length; i++) {
+                    newSegments.push({
+                        text: textPart[i],
+                        style: charMap[currentIndex + i],
+                    });
+                }
+            }
 
-  setSegments(mergedSegments);
-  pushToHistory(mergedSegments);
-};
+            // 🔥 הטקסט המוחלף - עם הסטייל של התו הראשון
+            const styleOfMatch = charMap[matchIndex];
+
+            newSegments.push({
+                text: replaceText,
+                style: styleOfMatch,
+            });
+
+            currentIndex = matchIndex + searchText.length;
+        });
+
+        // טקסט אחרי ההתאמות
+        if (currentIndex < fullText.length) {
+            const textPart = fullText.slice(currentIndex);
+
+            for (let i = 0; i < textPart.length; i++) {
+                newSegments.push({
+                    text: textPart[i],
+                    style: charMap[currentIndex + i],
+                });
+            }
+        }
+
+        // 🔹 שלב 4: איחוד תווים עם אותו סטייל (אופטימיזציה)
+        const mergedSegments = [];
+        newSegments.forEach(seg => {
+            const last = mergedSegments[mergedSegments.length - 1];
+
+            if (
+                last &&
+                JSON.stringify(last.style) === JSON.stringify(seg.style)
+            ) {
+                last.text += seg.text;
+            } else {
+                mergedSegments.push({ ...seg });
+            }
+        });
+
+        setSegments(mergedSegments);
+        pushToHistory(mergedSegments);
+    };
 
     const pushToHistory = (segmentsToSave) => {
         const MAX_HISTORY = 50;
@@ -330,36 +324,36 @@ const handleReplace = (searchText, replaceText) => {
     };
 
     return (
-        <>     
+        <>
             <div id="editor-container">
-            <h1>Editor</h1>
-            <TextInput text={plainText} onChange={handleTextChange} />
-            <Toolbar
-                currentStyle={currentStyle}
-                updateStyle={updateStyle}
-                applyMode={applyMode}
-                setApplyMode={changeApplyMode}
-            />
-            <div id="controls-container">
-                <div id="btns-container">
-                    <VirtualKeyboard onInsert={insertChar} />
-                
-                <div id="delete-controls">
-                    <DeleteControls
-                        onDeleteChar={deleteChar}
-                        onDeleteWord={deleteWord}
-                        onClear={clearAll}
-                    />
+                <h1>Editor</h1>
+                <TextInput text={plainText} onChange={handleTextChange} />
+                <Toolbar
+                    currentStyle={currentStyle}
+                    updateStyle={updateStyle}
+                    applyMode={applyMode}
+                    setApplyMode={changeApplyMode}
+                />
+                <div id="controls-container">
+                    <div id="btns-container">
+                        <VirtualKeyboard onInsert={insertChar} />
+
+                        <div id="delete-controls">
+                            <DeleteControls
+                                onDeleteChar={deleteChar}
+                                onDeleteWord={deleteWord}
+                                onClear={clearAll}
+                            />
+                        </div>
+                    </div>
+
+                    <SearchReplace onFind={handleFind} onReplace={handleReplace} />
                 </div>
-                </div>
-           
-            <SearchReplace onFind={handleFind} onReplace={handleReplace} />
-             </div>
-            <button id="undo"onClick={handleUndo}>
-                Undo
-            </button>
-            
-        </div>
+                <button id="undo" onClick={handleUndo}>
+                    Undo
+                </button>
+
+            </div>
         </>
     )
 }

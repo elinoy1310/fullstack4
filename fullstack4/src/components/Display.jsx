@@ -1,7 +1,6 @@
 function Display({ segments, highlights }) {
   let currentIndex = 0;
- 
-
+  
   return (
 
     <div id="display-container">

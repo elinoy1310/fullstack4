@@ -17,7 +17,6 @@ function VirtualKeyboard({ onInsert }) {
       <h3>Virtual Keyboard</h3>
       <p id="category-label">Categories</p>
 
-      {/* החלפת קטגוריה */}
       <div id="category-buttons" >
       
         <button onClick={() => setMode("emoji")}>😀</button>
@@ -28,7 +27,6 @@ function VirtualKeyboard({ onInsert }) {
         <button onClick={() => setMode("hebrew")}>עברית</button>
       </div>
 
-      {/* מקלדת */}
       <div id="keys-container">
         {keyboards[mode].map((char, index) => (
           <button
