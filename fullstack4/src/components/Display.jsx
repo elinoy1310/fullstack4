@@ -17,11 +17,11 @@ function Display({ segments, highlights }) {
           const end = Math.min(h.end - segStart, seg.text.length);
 
           if (start < seg.text.length && end > 0) {
-            // טקסט לפני ההדגשה
+            // text before highlight
             if (start > lastIndex) {
               children.push(seg.text.slice(lastIndex, start));
             }
-            // טקסט מודגש
+            // highlighted text
             children.push(
               <span className="highlight" key={`${i}-${start}`} >
                 {seg.text.slice(start, end)}
@@ -31,7 +31,7 @@ function Display({ segments, highlights }) {
           }
         });
 
-        // טקסט אחרון שלא מודגש
+        // remaining non-highlighted text
         if (lastIndex < seg.text.length) {
           children.push(seg.text.slice(lastIndex));
         }

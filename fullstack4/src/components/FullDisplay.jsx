@@ -6,7 +6,7 @@ function FullDisplay({ docs, setActiveDocId, handleCloseDoc, activeDocId }) {
             <h1>Display</h1>
             <div id="full-display-container">
 
-                {/* 🔼 שורה עליונה - מסמכים מכווצים */}
+                {/* 🔼 Top row - minimized documents */}
                 <div className="docs-row-top">
                     {docs
                         .filter(doc => doc.id !== activeDocId)
@@ -21,7 +21,7 @@ function FullDisplay({ docs, setActiveDocId, handleCloseDoc, activeDocId }) {
                         ))}
                 </div>
 
-                {/* 🔽 מסמך פעיל */}
+                {/* 🔽 Active document */}
                 <div className="doc doc-active">
                     {docs
                         .filter(doc => doc.id === activeDocId)
@@ -38,7 +38,7 @@ function FullDisplay({ docs, setActiveDocId, handleCloseDoc, activeDocId }) {
                                 </div>
 
 
-                                {/* תצוגת הטקסט של המסמך */}
+                                {/* Document text display */}
                                 <Display segments={doc.segments} highlights={doc.highlights} />
                             </div>
                         ))}

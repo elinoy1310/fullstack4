@@ -4,7 +4,6 @@ import FileMenu from "./components/FileMenu";
 import Editor from "./components/Editor";
 import Auth from "./components/Auth";
 
-
 const defaultStyle = {
   color: "#000000",
   fontSize: "16px",
@@ -23,19 +22,19 @@ function createEmptyDoc(id) {
   };
 }
 
-// שמירת המסמכים הפתוחים של משתמש ב-localStorage (ללא היסטוריה - לחסוך מקום)
+// Saving the user's open documents in localStorage (without history - to save space)
 function saveOpenDocs(username, docs, activeDocId, nextId) {
   const toSave = docs.map((doc) => ({ ...doc, history: [] }));
   localStorage.setItem(`openDocs_${username}`, JSON.stringify({ docs: toSave, activeDocId, nextId }));
 }
 
-// טעינת המסמכים הפתוחים של משתמש מה-localStorage
+// Loading the user's open documents from localStorage
 function loadOpenDocs(username) {
   const saved = localStorage.getItem(`openDocs_${username}`);
   if (!saved) return null;
   try {
     const { docs, activeDocId, nextId } = JSON.parse(saved);
-    // משחזרים היסטוריה בסיסית לכל מסמך
+    // Restoring basic history for each document
     const restoredDocs = docs.map((doc) => ({ ...doc, history: [doc.segments] }));
     return { docs: restoredDocs, activeDocId, nextId };
   } catch {
@@ -44,7 +43,7 @@ function loadOpenDocs(username) {
 }
 
 function App() {
-  const [docs, setDocs] = useState([createEmptyDoc(1)]); //
+  const [docs, setDocs] = useState([createEmptyDoc(1)]);
   const [activeDocId, setActiveDocId] = useState(1);
   const [openFiles, setOpenFiles] = useState([]);
   const [currentUser, setCurrentUser] = useState(() => {
@@ -53,7 +52,7 @@ function App() {
 
   const activeDoc = docs.find((d) => d.id === activeDocId) || docs[0];
 
-  const updateDocField = (id, field, valueOrFn) => { //
+  const updateDocField = (id, field, valueOrFn) => {
     setDocs((prev) =>
       prev.map((doc) => {
         if (doc.id !== id) return doc;
@@ -64,22 +63,22 @@ function App() {
     );
   };
 
-  // move to Auth?
-  // כניסת משתמש - טוען את המסמכים שלו
+  // User login - loads their documents
   const handleLogin = (username) => {
     const saved = loadOpenDocs(username);
     if (saved) {
       setDocs(saved.docs);
       setActiveDocId(saved.activeDocId);
     } else {
-      // משתמש ללא מסמכים שמורים - מתחיל עם מסמך ריק
+      // User without saved documents - starts with a fresh document
       const fresh = createEmptyDoc(1);
       setDocs([fresh]);
       setActiveDocId(1);
     }
     setCurrentUser(username);
   };
-  // יציאת משתמש - שומר מסמכים פתוחים ומאפס state
+
+  // User logout - saves open documents and resets state
   const handleLogout = () => {
     const maxId = Math.max(...docs.map(d => d.id), 0);
     const newId = maxId + 1;
@@ -99,11 +98,11 @@ function App() {
 
     const newDoc = createEmptyDoc(newId);
 
-
     if (loadedSegments && Array.isArray(loadedSegments)) {
       newDoc.segments = loadedSegments;
       newDoc.history = [loadedSegments];
-      // 🔥 קח את התו האחרון
+
+      // 🔥 Take the last character
       const lastSeg = loadedSegments[loadedSegments.length - 1];
 
       if (lastSeg && lastSeg.text.length > 0) {
@@ -120,7 +119,6 @@ function App() {
 
     setDocs(prev => [...prev, newDoc]);
     setActiveDocId(newId);
-
   };
 
   // move to FullDisplay?
@@ -145,7 +143,7 @@ function App() {
     const remaining = docs.filter((d) => d.id !== id);
 
     if (remaining.length === 0) {
-      // אם נסגר המסמך האחרון - פותחים מסמך ריק חדש
+      // If the last document is closed - open a new empty one
       const maxId = Math.max(...docs.map(d => d.id), 0);
       const newId = maxId + 1;
       const fresh = createEmptyDoc(newId);
@@ -154,7 +152,7 @@ function App() {
 
     } else {
       setDocs(remaining);
-      // אם נסגר המסמך הפעיל - עוברים לאחרון ברשימה
+      // If the active document was closed - switch to the last one
       if (activeDocId === id) {
         setActiveDocId(remaining[remaining.length - 1].id);
       }
@@ -176,7 +174,7 @@ function App() {
 
   return (
     <div id="main-app">
-      {/* שורת משתמש - שם + כפתור התנתקות */}
+      {/* User bar - username + logout button */}
       <div id="user-bar">
         <span>👤 {currentUser}</span>
         <button onClick={handleLogout}>Logout</button>
@@ -197,7 +195,8 @@ function App() {
         docs={docs}
         setActiveDocId={setActiveDocId}
         handleCloseDoc={handleCloseDoc}
-        activeDocId={activeDocId} />
+        activeDocId={activeDocId}
+      />
 
       <Editor
         segments={activeDoc.segments}

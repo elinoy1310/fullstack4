@@ -78,7 +78,7 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
         setApplyMode(mode);
     };
 
-    // הוספת תו מהמקשים הווירטואליים
+    // Insert character from virtual keyboard
     const insertChar = (char) => {
         setSegments((prev) => {
             const updated = [...prev];
@@ -106,13 +106,13 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
 
     const deleteWord = () => {
         setSegments((prev) => {
-            // כל הטקסט
+            // Full text
             const fullText = plainText;
 
-            // מוחקים מילה אחרונה
+            // Delete last word
             const newText = fullText.replace(/\s*\S+$/, "");
 
-            // אם ריק
+            // If empty
             if (!newText) {
                 return [
                     {
@@ -122,7 +122,7 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
                 ];
             }
 
-            // 🔥 בונים מחדש סגמנטים לפי אורך
+            // 🔥 Rebuild segments based on length
             let remaining = newText;
             const newSegments = [];
 
@@ -139,7 +139,7 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
                 remaining = remaining.slice(take.length);
             }
 
-            pushToHistory(newSegments); // ✅ דוחפים snapshot החדש
+            pushToHistory(newSegments); // ✅ push new snapshot
 
             return newSegments;
         });
@@ -151,7 +151,7 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
             { text: "", style: currentStyle }
         ];
         setSegments(updated);
-        pushToHistory(updated); // ✅ snapshot חדש
+        pushToHistory(updated); // ✅ new snapshot
     };
 
     // search & replace
@@ -176,40 +176,12 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
         return matches;
     };
 
-    //   if (!searchText) return;
-
-    //   const newSegments = [];
-
-    //   segments.forEach(seg => {
-    //     let text = seg.text;
-
-    //     if (!text.includes(searchText)) {
-    //       newSegments.push(seg);
-    //       return;
-    //     }
-
-    //     const parts = text.split(searchText);
-
-    //     parts.forEach((part, i) => {
-    //       if (part) {
-    //         newSegments.push({ text: part, style: seg.style });
-    //       }
-
-    //       if (i < parts.length - 1) {
-    //         newSegments.push({ text: replaceText, style: seg.style });
-    //       }
-    //     });
-    //   });
-
-    //   setSegments(newSegments);
-    //   pushToHistory(newSegments);
-    // };
     const handleReplace = (searchText, replaceText) => {
         if (!searchText) return;
 
-        // 🔹 שלב 1: בניית טקסט מלא + מיפוי אינדקסים לסטיילים
+        // 🔹 Step 1: Build full text + map indexes to styles
         let fullText = "";
-        const charMap = []; // לכל תו → שומר את הסטייל שלו
+        const charMap = []; // for each char → store its style
 
         segments.forEach(seg => {
             for (let i = 0; i < seg.text.length; i++) {
@@ -218,7 +190,7 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
             }
         });
 
-        // 🔹 שלב 2: חיפוש כל ההתאמות
+        // 🔹 Step 2: Find all matches
         const matches = [];
         let startIndex = 0;
 
@@ -232,12 +204,12 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
 
         if (matches.length === 0) return;
 
-        // 🔹 שלב 3: בניית segments חדשים
+        // 🔹 Step 3: Build new segments
         const newSegments = [];
         let currentIndex = 0;
 
         matches.forEach(matchIndex => {
-            // טקסט לפני ההתאמה
+            // Text before match
             if (matchIndex > currentIndex) {
                 const textPart = fullText.slice(currentIndex, matchIndex);
 
@@ -249,7 +221,7 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
                 }
             }
 
-            // 🔥 הטקסט המוחלף - עם הסטייל של התו הראשון
+            // 🔥 Replaced text - with style of first matched char
             const styleOfMatch = charMap[matchIndex];
 
             newSegments.push({
@@ -260,7 +232,7 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
             currentIndex = matchIndex + searchText.length;
         });
 
-        // טקסט אחרי ההתאמות
+        // Text after matches
         if (currentIndex < fullText.length) {
             const textPart = fullText.slice(currentIndex);
 
@@ -272,7 +244,7 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
             }
         }
 
-        // 🔹 שלב 4: איחוד תווים עם אותו סטייל (אופטימיזציה)
+        // 🔹 Step 4: Merge characters with same style (optimization)
         const mergedSegments = [];
         newSegments.forEach(seg => {
             const last = mergedSegments[mergedSegments.length - 1];
@@ -300,7 +272,7 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
 
         setHistory((prev) => {
             const newHistory = [...prev, cloned];
-            // אם ההיסטוריה ארוכה מדי, חותכים מההתחלה
+            // If history is too long, trim from the beginning
             if (newHistory.length > MAX_HISTORY) {
                 return newHistory.slice(newHistory.length - MAX_HISTORY);
             }
@@ -310,9 +282,9 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
 
     const handleUndo = () => {
         setHistory((prev) => {
-            if (prev.length <= 1) return prev; // אין מה לבטל
+            if (prev.length <= 1) return prev; // nothing to undo
 
-            const last = prev[prev.length - 2]; // המצב הקודם
+            const last = prev[prev.length - 2]; // previous state
 
             setSegments(last.map((s) => ({
                 text: s.text,
