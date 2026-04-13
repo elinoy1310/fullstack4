@@ -1,97 +1,77 @@
 import { useState } from "react";
 import FileBar from "./FileBar";
 
-function FileMenu({ segments,setSegments, currentStyle, defaultStyle, setCurrentStyle, setHistory, currentFile,setCurrentFile }) {
+// מנהל קבצים - שמירה, טעינה, פתיחת מסמך חדש
+function FileMenu({ segments, setSegments, currentStyle, defaultStyle, setCurrentStyle, setHistory, onNewDoc, activeDocName, openFiles, onRename, currentFile, setCurrentFile, }) {
 
+    // רשימת הקבצים השמורים מה-localStorage
     const [files, setFiles] = useState(() => {
         const saved = localStorage.getItem("files");
         return saved ? JSON.parse(saved) : [];
     });
 
-    let isSaved= false
-
-    // file management
+    // שמירה לקובץ קיים
     const handleSave = () => {
-        if (!currentFile) {
-            alert("No file selected. Use Save As.");
+        if (!currentFile || currentFile.startsWith("untitled")) {
+            alert("Use Save As for new file");
             return;
         }
-
-        localStorage.setItem(
-            `file_${currentFile}`,
-            JSON.stringify(segments)
-        );
-        isSaved = true;
+        localStorage.setItem(`file_${currentFile}`, JSON.stringify(segments));
+        alert("File saved successfully");
     };
 
+    // שמירה בשם חדש
     const handleSaveAs = (fileName) => {
         if (!fileName) return;
-
-        localStorage.setItem(
-            `file_${fileName}`,
-            JSON.stringify(segments)
-        );
-
+        localStorage.setItem(`file_${fileName}`, JSON.stringify(segments));
         setCurrentFile(fileName);
 
+        // מוסיף לרשימת הקבצים אם עדיין לא קיים
         setFiles((prev) => {
             if (prev.includes(fileName)) return prev;
-
             const updated = [...prev, fileName];
             localStorage.setItem("files", JSON.stringify(updated));
             return updated;
         });
-
-        isSaved = true;
+setHistory([])
+        alert("File saved successfully");
+// עדכן שם מסמך
+onRename(fileName);
     };
 
+    // טעינת קובץ קיים
     const handleLoad = (fileName) => {
-        if (!fileName) return;
 
+        if (!fileName) return;
+        if (openFiles.includes(fileName)) {
+            alert("File already open");
+            return;
+        }
         const data = localStorage.getItem(`file_${fileName}`);
         if (!data) return;
-
         const parsed = JSON.parse(data);
-
-        setSegments(parsed);
-        setHistory([parsed]);
-        setCurrentFile(fileName); // 🔥 חשוב
-        isSaved = true;
-    };
-
-    const handleNew = () => {
-        const plainText = segments.map((s) => s.text).join("");
-        if (plainText.length > 0 && !isSaved) {
-            const confirmNew = window.confirm("Start new file without saving?");
-            if (!confirmNew) return;
+        // אם כבר פתוח → לא לפתוח שוב
+        if (window.openFiles?.includes(fileName)) {
+            alert("File already open");
+            return;
         }
 
-        setCurrentStyle(defaultStyle);
-        const newDoc = [
-            {
-                text: "",
-                style: currentStyle
-            },
-        ];
-
-        setSegments(newDoc);
-        setHistory([newDoc]);
-        setCurrentFile("");
-        isSaved = false;
+        // יצירת מסמך חדש
+        onNewDoc(parsed, fileName);
     };
 
-    return (<>
-    <FileBar
-        files={files}
-        onSave={handleSave}
-        onSaveAs={handleSaveAs}
-        onLoad={handleLoad}
-        onNew={handleNew}
-        />
-        
-
-        </> 
-        )
-
+    return (
+        <>
+            <FileBar
+                files={files}
+                onSave={handleSave}
+                onSaveAs={handleSaveAs}
+                onLoad={handleLoad}
+                onNew={onNewDoc} // מועבר ישירות מ-App
+            />
+         
+        </>
+    );
 }
+
 export default FileMenu;

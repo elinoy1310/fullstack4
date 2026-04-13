@@ -8,7 +8,7 @@ import SearchReplace from "./SearchReplace";
 
 function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHistory, setHighlights }) {
 
-    const [applyMode, setApplyMode] = useState("all");
+    const [applyMode, setApplyMode] = useState("future");
 
     const plainText = segments.map((s) => s.text).join("");
 
@@ -181,18 +181,34 @@ function Editor({ segments, setSegments, currentStyle, setCurrentStyle, setHisto
     };
 
     const handleReplace = (searchText, replaceText) => {
-        if (!searchText) return;
+  if (!searchText) return;
 
-        const fullText = segments.map((s) => s.text).join("");
-        const newText = fullText.split(searchText).join(replaceText);
+  const newSegments = [];
 
-        const newSegments = [
-            { text: newText, style: currentStyle }
-        ];
-        setSegments(newSegments);
-        pushToHistory(newSegments); // ✅ snapshot חדש
-        setHighlights([]);
-    };
+  segments.forEach(seg => {
+    let text = seg.text;
+
+    if (!text.includes(searchText)) {
+      newSegments.push(seg);
+      return;
+    }
+
+    const parts = text.split(searchText);
+
+    parts.forEach((part, i) => {
+      if (part) {
+        newSegments.push({ text: part, style: seg.style });
+      }
+
+      if (i < parts.length - 1) {
+        newSegments.push({ text: replaceText, style: seg.style });
+      }
+    });
+  });
+
+  setSegments(newSegments);
+  pushToHistory(newSegments);
+};
 
     const pushToHistory = (segmentsToSave) => {
         const MAX_HISTORY = 50;

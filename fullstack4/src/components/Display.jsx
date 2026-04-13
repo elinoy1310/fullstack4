@@ -1,13 +1,12 @@
-function Display({ segments, highlights, fileName }) {
+function Display({ segments, highlights }) {
   let currentIndex = 0;
+ 
 
   return (
-    <div >
 
-      {fileName && <h2 id="file-name">File Name: {fileName}</h2>}
-      
     <div id="display-container">
-      {segments.map((seg, i) => {
+      { 
+      segments.map((seg, i) => {
         const segStart = currentIndex;
         const segEnd = currentIndex + seg.text.length;
 
@@ -47,7 +46,7 @@ function Display({ segments, highlights, fileName }) {
         );
       })}
     </div>
-    </div>
+    
   );
 }
 
